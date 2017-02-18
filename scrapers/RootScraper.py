@@ -1,5 +1,18 @@
 from bs4 import BeautifulSoup
 from requests import get
+import random
+
+user_agents = [
+    'Googlebot/2.1 (+http://www.google.com/bot.html)',
+    'Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405',
+    'Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3 (FM Scene 4.6.1) ',
+    'AltaVista Intranet V2.0 AVS EVAL search@freeit.com',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+]
+
+header = {
+    'user-agent': random.choice(user_agents)
+}
 
 
 class RootScraper():
@@ -15,7 +28,8 @@ class RootScraper():
         """
         Takes a url, and return BeautifulSoup for that Url
         """
-        return BeautifulSoup(get(url).content, 'html.parser')
+        print("Downloading page: ", url, header)
+        return BeautifulSoup(get(url, headers=header).content, 'html.parser')
 
     def parse(self):
         """

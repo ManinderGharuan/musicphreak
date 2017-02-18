@@ -1,4 +1,7 @@
 class Song():
+    """
+    Represents a single song extracted by scrapers
+    """
     def __init__(self, name, artist, image_link='', mp3_links={}):
         self.name = name
         self.artist = artist
