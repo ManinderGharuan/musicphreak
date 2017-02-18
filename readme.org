@@ -2,6 +2,14 @@
 
 App to help downloading top Punjabi songs
 
+** Setup
+
+#+BEGIN_SRC bash
+pip install -r ./requirements.txt
+#+END_SRC
+
+* Specs
+
 ** Use cases
 
 *** John
@@ -22,12 +30,31 @@ song John downloaded.
 ** Specifications
 
 *** Scraping
-- Start with a list of "Start urls"
-  - http://djpunjab.com/page/top20.html?type=week
-  - https://mr-johal.com/topTracks.php?cat=Single%20Track
-- Extract ~((song-name, artist), [link])~ pairs
-- Create unique list of ~((song-name, artist), [link])~ pairs
-- Print list
+**** RootScraper(start_url)
+
+- =self.soup=
+
+  Initial soup of start url of each scraper
+
+- =make_soup (url :string)=
+
+  Takes a url, and return BeautifulSoup for that Url
+
+- =+=
+
+  Combine two scrapers such that their songs are unique
+
+- =parse ()=
+
+  Should return list of songs after assigning them to ~self.songs~.
+  To be implemented by child scrapers.
+
+**** DjpunjabScraper
+Start URL: http://djpunjab.com/page/top20.html?type=week
+
+**** MrjohalScraper
+Start URL: https://mr-johal.com/topTracks.php?cat=Single%20Track
+
 
 *** Data Cleaning
 
