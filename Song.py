@@ -4,3 +4,6 @@ class Song():
         self.artist = artist
         self.image_link = image_link
         self.mp3_links = mp3_links
+
+    def __repr__(self):
+        return "<name: {} artist: {}>".format(self.name, self.artist)
