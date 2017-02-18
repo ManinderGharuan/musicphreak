@@ -10,10 +10,6 @@ user_agents = [
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
 ]
 
-header = {
-    'user-agent': random.choice(user_agents)
-}
-
 
 class RootScraper():
     """
@@ -28,6 +24,10 @@ class RootScraper():
         """
         Takes a url, and return BeautifulSoup for that Url
         """
+        header = {
+            'user-agent': random.choice(user_agents)
+        }
+
         print("Downloading page: ", url, header)
         return BeautifulSoup(get(url, headers=header).content, 'html.parser')
 
