@@ -28,7 +28,7 @@ class RootScraper():
             'user-agent': random.choice(user_agents)
         }
 
-        print("Downloading page: ", url, header)
+        print("Downloading page: ", url)
         return BeautifulSoup(get(url, headers=header).content, 'html.parser')
 
     def parse(self):

@@ -10,3 +10,11 @@ class Song():
 
     def __repr__(self):
         return "<name: {} artist: {}>".format(self.name, self.artist)
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "artist": self.artist,
+            "image_link": self.image_link,
+            "mp3_links": self.mp3_links
+        }
