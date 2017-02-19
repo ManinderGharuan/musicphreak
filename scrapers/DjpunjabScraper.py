@@ -17,8 +17,8 @@ class DjpunjabScraper(RootScraper):
 
         for link in links:
             link_soup = self.make_soup(link)
-            metadata_div = link_soup.findAll("div", {"class": "cont-a"})
-            img = metadata_div.find('img').attrs['src']
+            metadata_div = link_soup.find("div", {"class": "cont-a"})
+            img = metadata_div.find('img').get('src')
 
             metadata_rows = [
                 [j.strip() for j in i.text.split(':')]
@@ -42,7 +42,9 @@ class DjpunjabScraper(RootScraper):
                 if a.attrs['href'].endswith('.mp3'):
                     maybe_mp3_links.append(a)
 
-            for mp3_link in [i for i in mp3_links if 'Download In' in i.text]:
+            maybe_mp3_links = [i for i in maybe_mp3_links if 'Download In' in i.text]
+
+            for mp3_link in maybe_mp3_links:
                 if '32 Kbps' in mp3_link.text:
                     mp3_links['32'] = mp3_link.attrs['href']
                 if '48 Kbps' in mp3_link.text:
