@@ -1,8 +1,8 @@
 from os import path
 
 def get_download_links_html(mp3_links):
-    template = "<a class='download-link' href={href}>{bitrate}kbps</a>"
-    html = ''
+    template = "<a download class='download-link' href={href}>{bitrate}kbps</a>"
+    html = "<span class='download-icon'></span>"
 
     for bitrate in mp3_links.keys():
         html += template.format(bitrate=bitrate, href=mp3_links[bitrate])
@@ -14,7 +14,7 @@ def get_song_html(song):
     """Returns HTML to represent a single son"""
     template = """
     <li class='song'>
-        <img class='thumb'  src={image_link} />
+        <div class='thumb' style="background-image: url({image_link})"></div>
         <h2 class='song-name'>{name}</h2>
         <p class='song-artist'>{artist}</p>
         <div class='download-links'>
