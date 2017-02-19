@@ -15,10 +15,12 @@ def get_song_html(song):
     template = """
     <li class='song'>
         <div class='thumb' style="background-image: url({image_link})"></div>
-        <h2 class='song-name'>{name}</h2>
-        <p class='song-artist'>{artist}</p>
-        <div class='download-links'>
-            {mp3_links_html}
+        <div class='tile-contents'>
+            <h2 class='song-name'>{name}</h2>
+            <p class='song-artist'>{artist}</p>
+            <div class='download-links'>
+                {mp3_links_html}
+            </div>
         </div>
     </li>
     """
