@@ -52,9 +52,12 @@ song John downloaded.
 **** DjpunjabScraper
 Start URL: http://djpunjab.com/page/top20.html?type=week
 
-**** MrjohalScraper
-Start URL: https://mr-johal.com/topTracks.php?cat=Single%20Track
+**** JattjugadScraper
+Start URL: http://jattjugad.xyz/mu/index.php?tnz=top20songs&cat=Punjabi_SinGle_Track&t=30days
 
+- =parse ()=
+
+  Returns list of songs after assigning them to ~self.songs~
 
 *** Data Cleaning
 
