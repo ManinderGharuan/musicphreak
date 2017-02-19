@@ -13,7 +13,8 @@ def get_download_links_html(mp3_links):
 def get_song_html(song):
     """Returns HTML to represent a single son"""
     template = """
-    <li class='song'>
+    <li class='song' data-mp3='{playable_mp3}'>
+        <span class='status-icon'></span>
         <div class='thumb' style="background-image: url({image_link})"></div>
         <div class='tile-contents'>
             <h2 class='song-name'>{name}</h2>
@@ -25,6 +26,7 @@ def get_song_html(song):
     </li>
     """
     song['artist'] = ', '.join(song['artist'])
+    song['playable_mp3'] = song['mp3_links']['48'].strip()
 
     return template.format(
         mp3_links_html=get_download_links_html(song['mp3_links']),
@@ -40,6 +42,7 @@ def get_html(data):
     <head>
         <title>Top 20 Punjabi songs</title>
         <style>{styles}</style>
+        <script>{script}</script>
     </head>
     <body>
         <div class='container'>
@@ -52,8 +55,12 @@ def get_html(data):
 
     html = ''.join([get_song_html(song) for song in data])
     css_file_path = path.dirname(__file__) + '/styles.css'
+    script_file_path = path.dirname(__file__) + '/script.js'
 
     with open(css_file_path, 'r') as f:
         styles = f.read()
 
-    return template.format(html, styles=styles)
+    with open(script_file_path, 'r') as f:
+        script = f.read()
+
+    return template.format(html, styles=styles, script=script)
