@@ -14,7 +14,6 @@ class MrjattScraper(RootScraper):
                  for link in self.soup.find_all('a', {'class': 'touch'})
                  if 'download' in link.get('href')]
 
-        return links
         for link in links:
             link_soup = self.make_soup(link)
             metadata_div = link_soup.find('div', {'class': 'albumCoverSmall'})
@@ -40,7 +39,7 @@ class MrjattScraper(RootScraper):
             maybe_mp3_links = link_soup.findAll('a', {'class': 'touch'})
 
             for i in maybe_mp3_links:
-                if i.get('herf').endswith('.mp3'):
+                if i.get('href').endswith('.mp3'):
                     all_links.append(i)
 
             all_links = [i for i in all_links if 'Download in' in i.text]
