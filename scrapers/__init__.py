@@ -51,7 +51,7 @@ def get_data():
 
     try:
         with open(JSON_FILENAME, 'r') as f:
-            data = f.read()
+            data = json.load(f)
     except IOError:
         data = run_scrapers()   # list of songs
         data = [song.to_dict() for song in data]  # list of dicts
