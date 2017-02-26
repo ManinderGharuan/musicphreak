@@ -6,6 +6,7 @@ var playAudio = function(event) {
     if (playing_audio && playing_audio.src !== url) {
         playing_audio.pause();
         playing_audio = null;
+        playing_audio.currentTime = 0;
     }
 
     if (playing_audio) {
