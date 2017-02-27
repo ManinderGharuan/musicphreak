@@ -10,62 +10,42 @@ var remove_showPauseIcon = function(event) {
     event.querySelector('span').classList.remove('paused');
 };
 
-var playing_audio = false;
+var playing_audio = null;
 var old_parentNode = null;
 
 var playAudio = function(event) {
-    let parentNode = event.target.parentNode;
-    let url = parentNode.querySelector(".download-link").href;
+    let target = event.target;
+    let parentNode = target.parentNode;
 
-    if (playing_audio && playing_audio_src.src !== url) {
-        if (parentNode.querySelector('span') === event.target){
+    if (parentNode.querySelector('span') === target) {
+        let url = parentNode.querySelector(".download-link").href;
+
+        if (playing_audio && playing_audio_src.src !== url) {
             playing_audio_src.pause();
             playing_audio = null;
 
             remove_showPauseIcon(old_parentNode);
-
-            old_parentNode.addEventListener('mouseenter', showPlayIcon);
-            old_parentNode.addEventListener('mouseleave', hidePlayIcon);
-        }
-    } else if (!playing_audio && typeof playing_audio_src !== 'undefined' && playing_audio_src !== url) {
-        if (parentNode.querySelector('span') === event.target) {
             remove_showPlayIcon(old_parentNode);
 
-<<<<<<< HEAD
             old_parentNode.addEventListener('mouseenter', showPlayIcon);
             old_parentNode.addEventListener('mouseleave', hidePlayIcon);
         }
-=======
-    if (playing_audio && playing_audio.src !== url) {
-        playing_audio.pause();
-        playing_audio = null;
-        playing_audio.currentTime = 0;
->>>>>>> 07aff6e43f76445aa500b4f20e95436259035a0b
-    }
 
-    if (playing_audio) {
-        if (parentNode.querySelector('span') === event.target){
-            if (playing_audio_src.paused){
+        if (playing_audio) {
+            if (playing_audio_src.paused) {
                 playing_audio_src.play();
 
                 remove_showPlayIcon(parentNode);
                 add_showPauseIcon(parentNode);
 
-                playing_audio = true;
-            } else{
+            } else {
                 playing_audio_src.pause();
 
                 remove_showPauseIcon(parentNode);
+                target.classList.add('playing');
 
-                parentNode.querySelector("span").classList.add('playing');
-                parentNode.addEventListener('mouseenter', showPlayIcon);
-                parentNode.addEventListener('mouseleave', hidePlayIcon);
-
-                playing_audio = false;
             }
-        }
-    } else {
-        if (parentNode.querySelector('span') === event.target){
+        } else {
             playing_audio_src = new Audio(url);
             playing_audio_src.play();
 
