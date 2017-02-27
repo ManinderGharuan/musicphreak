@@ -31,9 +31,16 @@ var playAudio = function(event) {
         if (parentNode.querySelector('span') === event.target) {
             remove_showPlayIcon(old_parentNode);
 
+<<<<<<< HEAD
             old_parentNode.addEventListener('mouseenter', showPlayIcon);
             old_parentNode.addEventListener('mouseleave', hidePlayIcon);
         }
+=======
+    if (playing_audio && playing_audio.src !== url) {
+        playing_audio.pause();
+        playing_audio = null;
+        playing_audio.currentTime = 0;
+>>>>>>> 07aff6e43f76445aa500b4f20e95436259035a0b
     }
 
     if (playing_audio) {

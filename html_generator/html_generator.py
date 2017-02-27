@@ -1,7 +1,10 @@
 from os import path
 
+
 def get_download_links_html(mp3_links):
-    template = "<a download class='download-link' href={href}>{bitrate}kbps</a>"
+    template = "<a download class='download-link'\
+    href={href}>{bitrate}kbps</a>"
+
     html = "<span class='download-icon'></span>"
 
     for bitrate in mp3_links.keys():
@@ -40,6 +43,14 @@ def get_html(data):
     template = """
     <html>
     <head>
+         <nav>
+            <ul class='nav-bar'>
+              <li style="float:left"><a class="nav-links" \
+               href="#">MusicFreak.com</a></li>
+              <li class='nav-items'><a class='nav-links' href=\"#\">About \
+              </a></li>
+           </ul>
+         </nav>
         <title>Top 20 Punjabi songs</title>
         <style>{styles}</style>
         <script>{script}</script>
@@ -49,6 +60,12 @@ def get_html(data):
             <h1 class='header'>Top 20 punjabi songs</h1>
             <ul class='songs-list'>{}</ul>
         </div>
+        <footer class='footer'>
+           <div class='footer-div'>Music Freak &copy; 2017 &copyYoFreak; \
+             <a class="footer link" href="#">Privacy</a>
+          </div>
+       </footer>
+
     </body>
     </HTML>
     """
