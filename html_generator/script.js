@@ -1,17 +1,19 @@
 var playing_audio = false;
 
 var playAudio = function(event) {
-    console.log(event.srcElement, event.target);
+    const target = event.currentTarget;
+    const url = target.dataset.mp3;
 
     if (playing_audio && playing_audio.src !== url) {
         playing_audio.pause();
-        playing_audio = null;
         playing_audio.currentTime = 0;
+        playing_audio = null;
     }
 
     if (playing_audio) {
         if (playing_audio.paused)
             playing_audio.play();
+
         else
             playing_audio.pause();
     } else {
@@ -26,6 +28,11 @@ var showPlayIcon = function(event) {
     target.children[0].classList.add('playing');
 };
 
+var showPauseIcon = function(event) {
+    var target = event.target;
+    target.children[0].classList.add('paused');
+};
+
 var hidePlayIcon = function(event) {
     var target = event.target;
 
@@ -36,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document
         .querySelectorAll('.song')
         .forEach((el) => {
+
             el.addEventListener('click', playAudio, true);
             el.addEventListener('mouseenter', showPlayIcon);
             el.addEventListener('mouseleave', hidePlayIcon);
