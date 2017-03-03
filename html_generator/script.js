@@ -1,4 +1,17 @@
-var playing_audio = false;
+var remove_showPlayIcon = function(event) {
+    event.querySelector('span').classList.remove('playing');
+};
+
+var add_showPauseIcon = function(event) {
+    event.querySelector('span').classList.add('paused');
+};
+
+var remove_showPauseIcon = function(event) {
+    event.querySelector('span').classList.remove('paused');
+};
+
+var playing_audio = null;
+var old_parentNode = null;
 
 var playAudio = function(event) {
     const target = event.currentTarget;
