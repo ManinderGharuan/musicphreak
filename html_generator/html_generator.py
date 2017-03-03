@@ -46,26 +46,25 @@ def get_html(data):
     template = """
     <html>
     <head>
-         <nav>
-            <ul class='nav-bar'>
-              <li style="float:left"><a class="nav-links" \
-               href="#">MusicFreak.com</a></li>
-              <li class='nav-items'><a class='nav-links' href=\"#\">About \
-              </a></li>
-           </ul>
-         </nav>
         <title>Top 20 Punjabi songs</title>
         <style>{styles}</style>
         <script>{script}</script>
     </head>
     <body>
+        <nav>
+            <ul class='nav-bar'>
+                <li style="float:left"><a class="nav-links" \
+                   href="#">MusicFreak.com</a></li>
+                <li class='nav-items'><a class='nav-links' href=\"#\">About \
+                  </a></li>
+            </ul>
+        </nav>
         <div class='container'>
             <h1 class='header'>Top 20 punjabi songs</h1>
             <ul class='songs-list'>{}</ul>
         </div>
         <footer class='footer'>
-           <div class='footer-div'>Music Freak &copy; 2017 &copyYoFreak; \
-             <a class="footer link" href="#">Privacy</a>
+           Music Freak &copy;2017 YoFreak
           </div>
        </footer>
 
