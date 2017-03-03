@@ -58,6 +58,5 @@ def get_data():
 
         with open(JSON_FILENAME, 'w') as f:
             f.write(json.dumps(data))
-            data = json.dumps(data)
 
     return data
