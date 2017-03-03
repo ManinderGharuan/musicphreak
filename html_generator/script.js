@@ -1,62 +1,72 @@
-var remove_showPlayIcon = function(event) {
-    event.querySelector('span').classList.remove('playing');
-};
-
-var add_showPauseIcon = function(event) {
-    event.querySelector('span').classList.add('paused');
-};
-
-var remove_showPauseIcon = function(event) {
-    event.querySelector('span').classList.remove('paused');
-};
-
-var playing_audio = null;
-var old_parentNode = null;
+var playingAudio = window = null;
 
 var playAudio = function(event) {
     const target = event.currentTarget;
     const url = target.dataset.mp3;
 
-    if (playing_audio && playing_audio.src !== url) {
-        playing_audio.pause();
-        playing_audio.currentTime = 0;
-        playing_audio = null;
+    // When clicked different song from playingAudio
+    if (playingAudio && playingAudio.src !== url) {
+        playingAudio.pause();
+        playingAudio.target.querySelector(".status-icon").classList.remove('paused');
+        playingAudio = null;
     }
 
-    if (playing_audio) {
-        if (playing_audio.paused)
-            playing_audio.play();
+    // For same song
+    if (playingAudio) {
+        if (playingAudio.paused) {
+            playingAudio.play();
 
-        else
-            playing_audio.pause();
+            target.querySelector(".status-icon").classList.remove('playing');
+            target.querySelector(".status-icon").classList.add('paused');
+        }
+        else {
+            playingAudio.pause();
+
+            target.querySelector(".status-icon").classList.remove('paused');
+            target.querySelector(".status-icon").classList.add('playing');
+        }
     } else {
-        playing_audio = new Audio(url);
-        playing_audio.play();
+        playingAudio = new Audio(url);
+        playingAudio.target = target;
+        playingAudio.play();
+
+        target.querySelector(".status-icon").classList.remove('playing');
+        target.querySelector(".status-icon").classList.add('paused');
     }
 };
 
 var showPlayIcon = function(event) {
     var target = event.target;
 
-    target.children[0].classList.add('playing');
+    if (playingAudio && !playingAudio.paused && target.dataset.mp3 === playingAudio.src) {
+        return;
+    }
+
+    target.querySelector(".status-icon").classList.add('playing');
 };
 
 var showPauseIcon = function(event) {
     var target = event.target;
-    target.children[0].classList.add('paused');
+
+    target.querySelector(".status-icon").classList.add('paused');
 };
 
 var hidePlayIcon = function(event) {
     var target = event.target;
 
-    target.children[0].classList.remove('playing');
+    target.querySelector(".status-icon").classList.remove('playing');
+};
+
+var hidePauseIcon = function(event) {
+    var target = event.target;
+
+    target.querySelector(".status-icon").classList.remove('paused');
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     document
         .querySelectorAll('.song')
         .forEach((el) => {
-
             el.addEventListener('click', playAudio, true);
             el.addEventListener('mouseenter', showPlayIcon);
             el.addEventListener('mouseleave', hidePlayIcon);
