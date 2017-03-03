@@ -2,6 +2,9 @@ from os import path
 
 
 def get_download_links_html(mp3_links):
+    """
+    Returns HTML string for list of `mp3_links`
+    """
     template = "<a download class='download-link'\
     href={href}>{bitrate}kbps</a>"
 
@@ -14,7 +17,7 @@ def get_download_links_html(mp3_links):
 
 
 def get_song_html(song):
-    """Returns HTML to represent a single son"""
+    """Returns HTML to represent a single song"""
     template = """
     <li class='song' data-mp3='{playable_mp3}'>
         <span class='status-icon'></span>

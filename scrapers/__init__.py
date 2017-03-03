@@ -11,6 +11,11 @@ JSON_FILENAME = '{}{}.json' .format(DATA_DIR, date.today())
 
 
 def run_scrapers():
+    """
+    Returns list of songs after running scrapers.
+
+    Returns result of first scraper that finishes without error, otherwise raise an exception.
+    """
     try:
         jt = JattjugadScraper()
 
@@ -35,6 +40,12 @@ def run_scrapers():
 
 
 def get_data():
+    """
+    Returns data from ~run_scrapers~ and create json file with data.
+
+    If JSON file for <today> exists, returns data from this file
+    instead of re-running scrapers.
+    """
     data = None
 
     try:

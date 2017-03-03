@@ -3,6 +3,9 @@ from Song import Song
 
 
 class MrjattScraper(RootScraper):
+    """
+     Creates scraper which scraps mr-jatt.com for top 20 songs
+    """
     def __init__(self):
         start_url = 'https://mr-jatt.com/punjabisongs-top20.html'
         super().__init__(start_url)
@@ -10,6 +13,9 @@ class MrjattScraper(RootScraper):
         self.base_url = 'https://mr-jatt.com'
 
     def parse(self):
+        """
+        Returns list of `Song`s and assign them to `self.songs`
+        """
         links = [link.get('href')
                  for link in self.soup.find_all('a', {'class': 'touch'})
                  if 'download' in link.get('href')]

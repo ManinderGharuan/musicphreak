@@ -3,6 +3,9 @@ from Song import Song
 
 
 class JattjugadScraper(RootScraper):
+    """
+    Creates scraper which scraps jattjugad.com for top 20 songs
+    """
     def __init__(self):
         start_url = 'http://jattjugad.xyz/mu/index.php?tnz=top20songs&cat=Punjabi_SinGle_Track&t=30days'
         super().__init__(start_url)

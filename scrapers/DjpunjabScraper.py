@@ -3,6 +3,9 @@ from Song import Song
 
 
 class DjpunjabScraper(RootScraper):
+    """
+    Creates scraper which scraps djpunjab.com for top 20 songs
+    """
     def __init__(self):
         start_url = 'http://djpunjab.com/page/top20.html?type=week'
         super().__init__(start_url)
@@ -10,6 +13,9 @@ class DjpunjabScraper(RootScraper):
         self.base_url = 'http://djpunjab.com'
 
     def parse(self):
+        """
+        Returns list of `Song`s and assign them to `self.songs`
+        """
         links = [
             self.base_url + link.attrs['href']
             for link in self.soup.find('ol').find_all('a')
