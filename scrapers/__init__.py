@@ -6,8 +6,8 @@ from datetime import date
 import os
 
 
-DATA_DIR = './data/'
-JSON_FILENAME = '{}{}.json' .format(DATA_DIR, date.today())
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')
+JSON_FILENAME = '{}/{}.json' .format(DATA_DIR, date.today())
 
 
 def run_scrapers():
@@ -55,8 +55,8 @@ def get_data():
         files = os.listdir(DATA_DIR)
 
         for i in files:
-            if DATA_DIR + i != JSON_FILENAME:
-                os.remove(DATA_DIR + i)
+            if os.path.join(DATA_DIR, i) != JSON_FILENAME:
+                os.remove(os.path.join(DATA_DIR, i))
     except IOError:
         print("Error occurred while cleaning data dir")
 

@@ -76,6 +76,8 @@
   height: 300px;
   width: 300px;
   cursor: pointer;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .download-links {
