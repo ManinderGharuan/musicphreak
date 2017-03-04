@@ -2,13 +2,18 @@
 
 from scrapers import get_data
 from html_generator import html_generator
+from flask import Flask
+
+data = get_data()
+html = html_generator.get_html(data)
+
+app = Flask(__name__)
 
 
-if __name__ == '__main__':
-    data = get_data()
-    html = html_generator.get_html(data)
+@app.route('/')
+def page():
 
-    print("Writing Html file")
+    return html
 
-    with open('punjabi-songs.html', 'w') as foo:
-        foo.write(html)
+
+app.run()
