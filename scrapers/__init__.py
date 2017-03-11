@@ -9,7 +9,8 @@ from pprint import pprint
 from models.Album import Album
 from models.Song import Song
 from models.Artist import Artist
-
+from models.ArtistAlbums import ArtistAlbums
+from models.Mp3s import Mp3s
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')
 JSON_FILENAME = '{}/{}.json' .format(DATA_DIR, date.today())
@@ -70,17 +71,11 @@ def save_songs_to_db(songs):
 
             song_id = Song(song_name, album_id).insert(cursor).id
             artist_id = Artist(artist_name).insert(cursor).id
+            ArtistAlbums(album_id, artist_id).insert(cursor)
 
-            # cursor.execute("""
-            # INSERT INTO artist_albums(albums_id, artist_id)
-            # VALUES (?, ?);""", (album_id, artist_id))
-
-            # for quality in mp3_links:
-            #     url = mp3_links.get(quality)
-
-            #     cursor.execute("""
-            #     INSERT INTO mp3s (song_id, url, source, quality)
-            #     VALUES (?,?,?,?);""", (song_id, url, source, quality))
+            for quality in mp3_links:
+                url = mp3_links.get(quality)
+                Mp3s(song_id, url, source, quality).insert(cursor)
     except IOError as error:
         print("Error while inserting new song", error)
     finally:
