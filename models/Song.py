@@ -14,9 +14,9 @@ class Song():
         """
         duplicate_row = cursor.execute(
             """
-            SELECT * FROM song WHERE name = ?
+            SELECT * FROM song WHERE name = ? AND album_id = ?
             """,
-            (self.name,)
+            (self.name, self.album_id)
         ).fetchone()
 
         if duplicate_row:

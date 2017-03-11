@@ -69,16 +69,7 @@ def save_songs_to_db(songs):
             ).insert(cursor).id
 
             song_id = Song(song_name, album_id).insert(cursor).id
-
-            # song_id = cursor.execute("""
-            # INSERT INTO song (name, album_id)
-            # VALUES (?, ?);""", (song_name, album_id))
-
             artist_id = Artist(artist_name).insert(cursor).id
-
-            # artist_id = cursor.execute("""
-            # INSERT INTO artist (name)
-            # VALUES (?);""", (artist_name))
 
             # cursor.execute("""
             # INSERT INTO artist_albums(albums_id, artist_id)
