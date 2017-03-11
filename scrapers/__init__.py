@@ -4,6 +4,11 @@ from scrapers.MrjattScraper import MrjattScraper
 import json
 from datetime import date
 import os
+from db import get_db
+from pprint import pprint
+from models.Album import Album
+from models.Song import Song
+from models.Artist import Artist
 
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')
@@ -37,6 +42,59 @@ def run_scrapers():
     except Exception as e:
         print("MrjattScraper failed: ", e)
         raise "None of the scrapers worked. Sorry bru!"
+
+
+def save_songs_to_db(songs):
+    """
+    Save songs in database
+    """
+    db = get_db()
+
+    try:
+        cursor = db.cursor()
+
+        for song in songs:
+            song_name = song['name']
+            artist_name = song['artist']
+            album_name = song['album']
+            source = song['source']
+            poster_url = song['image_link']
+            mp3_links = song['mp3_links']
+            release_date = song['released_date']
+
+            album_id = Album(
+                album_name,
+                release_date,
+                poster_url
+            ).insert(cursor).id
+
+            song_id = Song(song_name, album_id).insert(cursor).id
+
+            # song_id = cursor.execute("""
+            # INSERT INTO song (name, album_id)
+            # VALUES (?, ?);""", (song_name, album_id))
+
+            artist_id = Artist(artist_name).insert(cursor).id
+
+            # artist_id = cursor.execute("""
+            # INSERT INTO artist (name)
+            # VALUES (?);""", (artist_name))
+
+            # cursor.execute("""
+            # INSERT INTO artist_albums(albums_id, artist_id)
+            # VALUES (?, ?);""", (album_id, artist_id))
+
+            # for quality in mp3_links:
+            #     url = mp3_links.get(quality)
+
+            #     cursor.execute("""
+            #     INSERT INTO mp3s (song_id, url, source, quality)
+            #     VALUES (?,?,?,?);""", (song_id, url, source, quality))
+    except IOError as error:
+        print("Error while inserting new song", error)
+    finally:
+        db.commit()
+        db.close()
 
 
 def get_data():
