@@ -2,19 +2,33 @@ class Artist():
     def __init__(self, name):
         self.name = name
 
-    def _absorb_db_row(self, row):
+    def _absorb_db_row(self, row, cursor):
         self.id = row[0]
-        self.name = row[1]
+        name = row[1]
+
+        if name == 'N/A' and self.name != 'N/A':
+            name = self.name
+            self.update_name(cursor)
+
+        self.name = name
+
+    def update_name(self, cursor):
+        """
+        Update row with new name
+        """
+        try:
+            cursor.execute(
+                """
+                UPDATE artist SET name=? WHERE id=?
+                """, (self.name, self.id))
+        except Exception as error:
+            print('Error occurred while updating album name', error)
+            raise error
 
     def check_duplicate(self, cursor):
         """
         Returns row from database if album with same name exists.
         """
-        if len(self.name) > 1:
-            self.name = '{}, {}' .format(self.name[0], self.name[1])
-        else:
-            self.name = '{}' .format(self.name[0])
-
         duplicate_row = cursor.execute(
             """
             SELECT * FROM artist WHERE name = ?
@@ -23,7 +37,7 @@ class Artist():
         ).fetchone()
 
         if duplicate_row:
-            self._absorb_db_row(duplicate_row)
+            self._absorb_db_row(duplicate_row, cursor)
 
         return duplicate_row
 

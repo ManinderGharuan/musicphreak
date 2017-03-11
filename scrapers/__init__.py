@@ -22,27 +22,31 @@ def run_scrapers():
 
     Returns result of first scraper that finishes without error, otherwise raise an exception.
     """
+    songs = []
+
     try:
         jt = JattjugadScraper()
 
-        return jt.parse()
+        songs += jt.parse()
     except Exception as e:
         print("JattjugadScraper failed: ", e)
 
     try:
         dj = DjpunjabScraper()
 
-        return dj.parse()
+        songs += dj.parse()
     except Exception as e:
         print("DjpunjabScraper failed: ", e)
 
     try:
         mr = MrjattScraper()
 
-        return mr.parse()
+        songs += mr.parse()
     except Exception as e:
         print("MrjattScraper failed: ", e)
         raise "None of the scrapers worked. Sorry bru!"
+
+    return songs
 
 
 def save_songs_to_db(songs):
@@ -56,7 +60,7 @@ def save_songs_to_db(songs):
 
         for song in songs:
             song_name = song['name']
-            artist_name = song['artist']
+            artist_names = song['artist']
             album_name = song['album']
             source = song['source']
             poster_url = song['image_link']
@@ -70,12 +74,15 @@ def save_songs_to_db(songs):
             ).insert(cursor).id
 
             song_id = Song(song_name, album_id).insert(cursor).id
-            artist_id = Artist(artist_name).insert(cursor).id
-            ArtistAlbums(album_id, artist_id).insert(cursor)
+
+            for name in (artist_names or ['N/A']):
+                artist_id = Artist(name).insert(cursor).id
+                ArtistAlbums(album_id, artist_id).insert(cursor)
 
             for quality in mp3_links:
                 url = mp3_links.get(quality)
                 Mp3s(song_id, url, source, quality).insert(cursor)
+
     except IOError as error:
         print("Error while inserting new song", error)
     finally:
@@ -83,35 +90,10 @@ def save_songs_to_db(songs):
         db.close()
 
 
-def get_data():
+def get_data(limit=0):
     """
-    Returns data from ~run_scrapers~ and create json file with data.
-
-    If JSON file for <today> exists, returns data from this file
-    instead of re-running scrapers.
+    Returns latest `limit` rows from database, all if latest is not given
     """
-    data = None
 
-    try:
-        if not os.path.isdir(DATA_DIR):
-            os.mkdir(DATA_DIR)
-
-        files = os.listdir(DATA_DIR)
-
-        for i in files:
-            if os.path.join(DATA_DIR, i) != JSON_FILENAME:
-                os.remove(os.path.join(DATA_DIR, i))
-    except IOError:
-        print("Error occurred while cleaning data dir")
-
-    try:
-        with open(JSON_FILENAME, 'r') as f:
-            data = json.load(f)
-    except IOError:
-        data = run_scrapers()   # list of songs
-        data = [song.to_dict() for song in data]  # list of dicts
-
-        with open(JSON_FILENAME, 'w') as f:
-            f.write(json.dumps(data))
 
     return data

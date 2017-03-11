@@ -6,7 +6,7 @@ class Song():
     def _absorb_db_row(self, row):
         self.id = row[0]
         self.name = row[1]
-        self.album_id = [2]
+        self.album_id = row[2]
 
     def check_duplicate(self, cursor):
         """
