@@ -24,6 +24,7 @@ class JattjugadScraper(RootScraper):
 
         for link in links:
             link_soup = self.make_soup(link)
+            source = None
             mp3_links = {}
 
             for tag_td in link_soup.find_all('td'):
@@ -33,6 +34,9 @@ class JattjugadScraper(RootScraper):
                 if 'Artists:' in tag_td.get_text():
                     artist = [i.strip() for i in tag_td.get_text().replace('Artists: ', '').split(',')]
 
+                if 'Album:' in tag_td.get_text():
+                    album = tag_td.get_text().replace('Album: ', '').strip()
+
             for image in link_soup.find_all('img'):
                 if '/mu/thumb/' in image.get('src'):
                     image_link = self.base_url + image.get('src')
@@ -40,6 +44,7 @@ class JattjugadScraper(RootScraper):
             for tag_a2 in link_soup.find_all('a'):
                 if "/mu/data/" in tag_a2.get('href'):
                     url = tag_a2.get('href')
+                    source = url
 
                     if '48' in url:
                         mp3_links['48'] = url
@@ -48,7 +53,7 @@ class JattjugadScraper(RootScraper):
                     else:
                         mp3_links['320'] = url
 
-            song = Song(song_name, artist, image_link, mp3_links)
+            song = Song(song_name, artist, album, source, image_link, mp3_links)
             self.songs.append(song)
 
         return self.songs

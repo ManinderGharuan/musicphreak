@@ -7,7 +7,7 @@ class MrjattScraper(RootScraper):
      Creates scraper which scraps mr-jatt.com for top 20 songs
     """
     def __init__(self):
-        start_url = 'https://mr-jatt.com/punjabisongs-top20.html'
+        start_url = 'https://mr-jatt.com/punjabisong-top20-singletracks.html'
         super().__init__(start_url)
 
         self.base_url = 'https://mr-jatt.com'
@@ -28,17 +28,20 @@ class MrjattScraper(RootScraper):
             name = None
             artist = None
             album = None
+            released_date = None
             matadata = link_soup.find('div', {'class': 'albumInfo'})
             matadata_rows = [[j.strip() for j in i.text.split(':')] for i in
                              matadata.find_all('p')]
 
             for text in matadata_rows:
-                if text[0].lower() == 'title':
-                    name = text[1]
-                if text[0].lower() == 'artists':
-                    artist = [i.strip() for i in text[1].split(',')]
                 if text[0].lower() == 'album':
-                    album = text[1]
+                    name = text[1]
+                if text[0].lower() == 'singer':
+                    artist = [i.strip() for i in text[1].split(',')]
+                if text[0].lower() == 'released':
+                    released_date = text[1]
+
+                album = name
 
             mp3_links = {}
             all_links = []
@@ -50,7 +53,9 @@ class MrjattScraper(RootScraper):
 
             all_links = [i for i in all_links if 'Download in' in i.text]
 
+            source = None
             for mp3 in all_links:
+                source = mp3
                 if '48 kbps' in mp3.text:
                     mp3_links['48'] = mp3.get('href')
                 if '128 kbps' in mp3.text:
@@ -60,7 +65,8 @@ class MrjattScraper(RootScraper):
                 if '320 kbps' in mp3.text:
                     mp3_links['320'] = mp3.get('href')
 
-            song = Song(name, artist, img, mp3_links)
+            song = Song(name, artist, album, source, img, mp3_links,
+                        released_date=released_date)
             self.songs.append(song)
 
         return self.songs

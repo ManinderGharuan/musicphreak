@@ -33,6 +33,7 @@ class DjpunjabScraper(RootScraper):
 
             name = None
             artist = None
+            source = None
 
             for text in metadata_rows:
                 if text[0].lower() == 'track':
@@ -40,6 +41,8 @@ class DjpunjabScraper(RootScraper):
 
                 if text[0].lower() == 'artist':
                     artist = [i.strip() for i in text[1].split(',')]
+
+                album = name
 
             mp3_links = {}
             maybe_mp3_links = []
@@ -51,6 +54,7 @@ class DjpunjabScraper(RootScraper):
             maybe_mp3_links = [i for i in maybe_mp3_links if 'Download In' in i.text]
 
             for mp3_link in maybe_mp3_links:
+                source = mp3_link
                 if '32 Kbps' in mp3_link.text:
                     mp3_links['32'] = mp3_link.attrs['href']
                 if '48 Kbps' in mp3_link.text:
@@ -60,7 +64,7 @@ class DjpunjabScraper(RootScraper):
                 if '320 Kbps' in mp3_link.text:
                     mp3_links['320'] = mp3_link.attrs['href']
 
-            song = Song(name, artist, img, mp3_links)
+            song = Song(name, artist, album, source, img, mp3_links)
             self.songs.append(song)
 
         return self.songs
