@@ -53,9 +53,7 @@ class MrjattScraper(RootScraper):
 
             all_links = [i for i in all_links if 'Download in' in i.text]
 
-            source = None
             for mp3 in all_links:
-                source = mp3
                 if '48 kbps' in mp3.text:
                     mp3_links['48'] = mp3.get('href')
                 if '128 kbps' in mp3.text:
@@ -65,7 +63,7 @@ class MrjattScraper(RootScraper):
                 if '320 kbps' in mp3.text:
                     mp3_links['320'] = mp3.get('href')
 
-            song = Song(name, artist, album, source, img, mp3_links,
+            song = Song(name, artist, album, self.base_url, img, mp3_links,
                         released_date=released_date)
             self.songs.append(song)
 
