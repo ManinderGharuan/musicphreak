@@ -21,7 +21,7 @@
       <ul class='songs-list'>
 
         {% for song in songs %}
-        <li class ="song" data-mp3="{{song.mp3_links['48'].strip()}}">
+        <li class ="song" data-mp3="{{song.mp3_links[song.smallest_bitrate].strip()}}">
           <span class="status-icon"></span>
           <div class="thumb" style="background-image: url({{song.image_link}})"></div>
           <div class="tile-contents">

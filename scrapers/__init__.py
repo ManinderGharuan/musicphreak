@@ -97,7 +97,7 @@ def normalize_data(data):
         artist = []
         album = None
         release_date = None
-        img_link = None
+        image_link = None
         mp3_links = {}
 
         for row in duplicates:
@@ -106,7 +106,7 @@ def normalize_data(data):
 
             album = album or row[2]
             release_date = release_date or row[3]
-            img_link = img_link or row[4]
+            image_link = image_link or row[4]
 
             if row[6] not in mp3_links:
                 mp3_links[row[6]] = row[5]
@@ -116,7 +116,7 @@ def normalize_data(data):
             "artist": artist,
             "album": album,
             "release_date": release_date,
-            "img_link": img_link,
+            "image_link": image_link,
             "mp3_links": mp3_links
         })
 

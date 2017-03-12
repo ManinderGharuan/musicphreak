@@ -15,6 +15,9 @@ def get_html(data):
     with open(path.join(TEAMPLATES_PATH, 'template.html'), 'r') as f:
         template = Template(f.read())
 
+    for song in data:
+        song['smallest_bitrate'] = min(song.get('mp3_links').keys())
+
     html = template.render(styles=styles, script=script, songs=data)
 
     return html
