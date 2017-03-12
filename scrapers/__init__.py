@@ -1,16 +1,16 @@
 from scrapers.DjpunjabScraper import DjpunjabScraper
 from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
-import json
 from datetime import date
 import os
 from db import get_db
-from pprint import pprint
 from models.Album import Album
 from models.Song import Song
 from models.Artist import Artist
 from models.ArtistAlbums import ArtistAlbums
 from models.Mp3s import Mp3s
+from itertools import groupby
+
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')
 JSON_FILENAME = '{}/{}.json' .format(DATA_DIR, date.today())
@@ -90,10 +90,57 @@ def save_songs_to_db(songs):
         db.close()
 
 
+def normalize_data(data):
+    songs = []
+
+    for (name, duplicates) in groupby(data, lambda row: row[0]):
+        artist = []
+        album = None
+        release_date = None
+        img_link = None
+        mp3_links = {}
+
+        for row in duplicates:
+            if row[1] not in artist:
+                artist.append(row[1])
+
+            album = album or row[2]
+            release_date = release_date or row[3]
+            img_link = img_link or row[4]
+
+            if row[6] not in mp3_links:
+                mp3_links[row[6]] = row[5]
+
+        songs.append({
+            "name": name,
+            "artist": artist,
+            "album": album,
+            "release_date": release_date,
+            "img_link": img_link,
+            "mp3_links": mp3_links
+        })
+
+    return songs
+
+
 def get_data(limit=0):
     """
     Returns latest `limit` rows from database, all if latest is not given
     """
+    db = get_db()
+    cursor = db.cursor()
 
+    rows = cursor.execute(
+        """
+        SELECT song.name AS "song_name", artist.name AS "artist_name",
+               album.name AS "album_name", album.release_date,
+               album.poster_img_url, mp3s.url, mp3s.quality
+        FROM artist_albums
+            INNER JOIN artist ON artist_albums.artist_id = artist.id
+            INNER JOIN album ON artist_albums.album_id = album.id
+            INNER JOIN song ON album.id = song.album_id
+            INNER JOIN mp3s ON song.id = mp3s.song_id;
+        """
+    ).fetchall()
 
-    return data
+    return normalize_data(rows)
