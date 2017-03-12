@@ -1,0 +1,3 @@
+graft musicphreak/templates
+graft musicphreak/static
+include musicphreak/schema.sql

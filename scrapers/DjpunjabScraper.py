@@ -1,5 +1,5 @@
 from scrapers.RootScraper import RootScraper
-from Song import Song
+from .Items import Song
 
 
 class DjpunjabScraper(RootScraper):

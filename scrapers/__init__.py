@@ -3,7 +3,6 @@ from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
 from datetime import date
 import os
-from db import get_db
 from models.Album import Album
 from models.Song import Song
 from models.Artist import Artist
@@ -123,11 +122,10 @@ def normalize_data(data):
     return songs
 
 
-def get_data(limit=0):
+def get_data(db):
     """
     Returns latest `limit` rows from database, all if latest is not given
     """
-    db = get_db()
     cursor = db.cursor()
 
     rows = cursor.execute(

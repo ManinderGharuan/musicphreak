@@ -1,0 +1,13 @@
+MANIFEST.in
+musicphreak/__init__.py
+musicphreak/html_generator.py
+musicphreak/musicphreak.py
+musicphreak/schema.sql
+musicphreak.egg-info/PKG-INFO
+musicphreak.egg-info/SOURCES.txt
+musicphreak.egg-info/dependency_links.txt
+musicphreak.egg-info/requires.txt
+musicphreak.egg-info/top_level.txt
+musicphreak/static/script.js
+musicphreak/static/styles.css
+musicphreak/templates/top20.html
