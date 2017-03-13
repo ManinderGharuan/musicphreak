@@ -9,6 +9,7 @@ from models.Artist import Artist
 from models.ArtistAlbums import ArtistAlbums
 from models.Mp3s import Mp3s
 from itertools import groupby
+from db import get_db
 
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')
@@ -18,8 +19,6 @@ JSON_FILENAME = '{}/{}.json' .format(DATA_DIR, date.today())
 def run_scrapers():
     """
     Returns list of songs after running scrapers.
-
-    Returns result of first scraper that finishes without error, otherwise raise an exception.
     """
     songs = []
 
@@ -90,6 +89,9 @@ def save_songs_to_db(songs):
 
 
 def normalize_data(data):
+    """
+    Returns list of songs after removing the duplicate items
+    """
     songs = []
 
     for (name, duplicates) in groupby(data, lambda row: row[0]):
@@ -120,25 +122,3 @@ def normalize_data(data):
         })
 
     return songs
-
-
-def get_data(db):
-    """
-    Returns latest `limit` rows from database, all if latest is not given
-    """
-    cursor = db.cursor()
-
-    rows = cursor.execute(
-        """
-        SELECT song.name AS "song_name", artist.name AS "artist_name",
-               album.name AS "album_name", album.release_date,
-               album.poster_img_url, mp3s.url, mp3s.quality
-        FROM artist_albums
-            INNER JOIN artist ON artist_albums.artist_id = artist.id
-            INNER JOIN album ON artist_albums.album_id = album.id
-            INNER JOIN song ON album.id = song.album_id
-            INNER JOIN mp3s ON song.id = mp3s.song_id;
-        """
-    ).fetchall()
-
-    return normalize_data(rows)

@@ -1,6 +1,7 @@
 from os import path
 from flask import g
 import sqlite3
+from scrapers import normalize_data
 
 
 def connect_db(app):
@@ -32,3 +33,25 @@ def init_db(app):
         db.cursor().executescript(f.read())
 
     db.commit()
+
+
+def get_data(db):
+    """
+    Returns latest `limit` rows from database, all if latest is not given
+    """
+    cursor = db.cursor()
+
+    rows = cursor.execute(
+        """
+        SELECT song.name AS "song_name", artist.name AS "artist_name",
+               album.name AS "album_name", album.release_date,
+               album.poster_img_url, mp3s.url, mp3s.quality
+        FROM artist_albums
+            INNER JOIN artist ON artist_albums.artist_id = artist.id
+            INNER JOIN album ON artist_albums.album_id = album.id
+            INNER JOIN song ON album.id = song.album_id
+            INNER JOIN mp3s ON song.id = mp3s.song_id;
+        """
+    ).fetchall()
+
+    return normalize_data(rows)
