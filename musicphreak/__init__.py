@@ -1,1 +1,0 @@
-from .musicphreak import app
