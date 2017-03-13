@@ -19,6 +19,7 @@ class RootScraper():
     def __init__(self, start_url):
         self.soup = self.make_soup(start_url)
         self.songs = []
+        self.ranking = []
 
     def make_soup(self, url):
         """

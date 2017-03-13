@@ -28,3 +28,22 @@ class Song():
             "mp3_links": self.mp3_links,
             "released_date": self.released_date
         }
+
+
+class Ranking():
+    def __init__(self, name, artist, ranking, week_start_date):
+        self.name = name
+        self.artist = artist
+        self.ranking = int(ranking)
+        self.week = week_start_date
+
+    def __repr__(self):
+        return "<name: {} ranking: {} week: {}>".format(self.name, self.ranking, self.week)
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "artist": self.artist,
+            "ranking": self.ranking,
+            "week": self.week
+        }
