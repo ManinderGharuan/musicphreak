@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
-    DATABASE=path.join(app.root_path, 'db', 'musicphreak.db')
+    DATABASE=path.join(path.dirname(app.root_path), 'musicphreak.db')
 ))
 
 
