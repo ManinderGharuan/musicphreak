@@ -51,6 +51,9 @@ class JattjugadScraper(RootScraper):
                     else:
                         mp3_links['320'] = url
 
+            if song_name == album:
+                album = None
+
             song = Song(song_name, artist, album, self.base_url, image_link, mp3_links)
             self.songs.append(song)
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 from scrapers.RootScraper import RootScraper
 from .Items import Song
 
@@ -39,9 +40,10 @@ class MrjattScraper(RootScraper):
                 if text[0].lower() == 'singer':
                     artist = [i.strip() for i in text[1].split(',')]
                 if text[0].lower() == 'released':
-                    released_date = text[1]
+                    rel_date = ' '.join(text[1].split(','))
+                    released_date = datetime.strptime(rel_date, '%d %b %Y')
 
-                album = name
+                album = None
 
             mp3_links = {}
             all_links = []

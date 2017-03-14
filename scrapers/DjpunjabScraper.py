@@ -41,7 +41,7 @@ class DjpunjabScraper(RootScraper):
                 if text[0].lower() == 'artist':
                     artist = [i.strip() for i in text[1].split(',')]
 
-                album = name
+                album = None
 
             mp3_links = {}
             maybe_mp3_links = []

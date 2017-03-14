@@ -31,6 +31,7 @@ class RadioMirchiScraper(RootScraper):
             song_ranking = Ranking(
                 name_artist_pair[0],
                 name_artist_pair[1],
+                self.base_url,
                 rank,
                 week
             )

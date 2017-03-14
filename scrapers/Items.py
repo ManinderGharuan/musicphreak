@@ -31,9 +31,10 @@ class Song():
 
 
 class Ranking():
-    def __init__(self, name, artist, ranking, week_start_date):
+    def __init__(self, name, artist, source, ranking, week_start_date):
         self.name = name
         self.artist = artist
+        self.source = source
         self.ranking = int(ranking)
         self.week = week_start_date
 
@@ -44,6 +45,7 @@ class Ranking():
         return {
             "name": self.name,
             "artist": self.artist,
+            "source": self.source,
             "ranking": self.ranking,
             "week": self.week
         }
