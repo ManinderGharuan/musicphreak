@@ -1,6 +1,6 @@
 from datetime import datetime, date
 from scrapers.RootScraper import RootScraper
-from Items import Ranking
+from .Items import Ranking
 
 
 class RadioMirchiScraper(RootScraper):

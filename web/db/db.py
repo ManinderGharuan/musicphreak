@@ -1,7 +1,7 @@
 from os import path
 from flask import g
 import sqlite3
-from scrapers import normalize_data
+from scrapers import *
 
 
 def connect_db(app):

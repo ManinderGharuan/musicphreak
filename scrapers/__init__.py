@@ -9,7 +9,7 @@ from models.Artist import Artist
 from models.ArtistAlbums import ArtistAlbums
 from models.Mp3s import Mp3s
 from itertools import groupby
-from db import get_db
+from web.db import *
 
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')

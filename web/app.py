@@ -1,7 +1,6 @@
 from os import path
 from flask import Flask, render_template, g
-from scrapers import get_data
-from .db import get_db
+from .db import get_db, get_data
 
 app = Flask(__name__)
 
