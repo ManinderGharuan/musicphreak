@@ -12,7 +12,7 @@ CREATE TABLE song (
 DROP TABLE IF EXISTS album;
 CREATE TABLE album (
        id INTEGER PRIMARY KEY autoincrement,
-       name TEXT NOT NULL,
+       name TEXT,
        release_date DATE,
        poster_img_url TEXT,
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -48,4 +48,18 @@ CREATE TABLE  mp3s (
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        FOREIGN KEY(song_id) REFERENCES song(id)
+);
+
+DROP TABLE IF EXISTS song_rankings;
+CREATE TABLE song_rankings (
+       id INTEGER PRIMARY KEY autoincrement,
+       song_id INTEGER NOT NULL,
+       artist_id INTEGER NOT NULL,
+       source TEXT NOT NULL,
+       rank INTEGER NOT NULL,
+       week DATE NOT NULL,
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       FOREIGN KEY(song_id) REFERENCES song(id),
+       FOREIGN KEY(artist_id) REFERENCES artist(id)
 );
