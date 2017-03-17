@@ -14,7 +14,7 @@ class Mp3s():
 
     def check_duplicate(self, cursor):
         """
-        Returns row from database if album with same name exists.
+        Returns row from database if mp3s with same url exists.
         """
         duplicate_row = cursor.execute(
             """
@@ -30,7 +30,7 @@ class Mp3s():
 
     def insert(self, cursor):
         """
-        Insert album to database. Fail if album already exists
+        Insert mp3s to database. Fail if mp3s already exists
         """
         if self.check_duplicate(cursor):
             return self

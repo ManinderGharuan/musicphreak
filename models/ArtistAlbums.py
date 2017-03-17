@@ -10,7 +10,7 @@ class ArtistAlbums():
 
     def check_duplicate(self, cursor):
         """
-        Returns row from database if album with same name exists.
+        Returns row from database if artist_albums with same album_id and artist_id exists.
         """
         duplicate_row = cursor.execute(
             """
@@ -26,7 +26,7 @@ class ArtistAlbums():
 
     def insert(self, cursor):
         """
-        Insert album to database. Fail if album already exists
+        Insert artist_albums to database. Fail if artist_albums already exists
         """
         if self.check_duplicate(cursor):
             return self

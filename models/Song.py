@@ -10,7 +10,7 @@ class Song():
 
     def check_duplicate(self, cursor):
         """
-        Returns row from database if album with same name exists.
+        Returns row from database if song with same name and album_id exists.
         """
         duplicate_row = cursor.execute(
             """
@@ -26,7 +26,7 @@ class Song():
 
     def insert(self, cursor):
         """
-        Insert album to database. Fail if album already exists
+        Insert song to database. Fail if song already exists
         """
         if self.check_duplicate(cursor):
             return self

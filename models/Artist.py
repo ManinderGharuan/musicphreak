@@ -14,7 +14,7 @@ class Artist():
 
     def update_name(self, cursor):
         """
-        Update row with new name
+        Update row with new name and id
         """
         try:
             cursor.execute(
@@ -27,7 +27,7 @@ class Artist():
 
     def check_duplicate(self, cursor):
         """
-        Returns row from database if album with same name exists.
+        Returns row from database if artist with same name exists.
         """
         duplicate_row = cursor.execute(
             """
@@ -43,7 +43,7 @@ class Artist():
 
     def insert(self, cursor):
         """
-        Insert album to database. Fail if album already exists
+        Insert artist to database. Fail if artist already exists
         """
         if self.check_duplicate(cursor):
             return self
