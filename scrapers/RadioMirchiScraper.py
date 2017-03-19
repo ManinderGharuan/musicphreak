@@ -25,12 +25,14 @@ class RadioMirchiScraper(RootScraper):
         for song in song_containers:
             name_artist_pair = song.find('h3').text
             name_artist_pair = [i.strip() for i in name_artist_pair.split('\n')]
+            song_name = name_artist_pair[0]
+            artist = name_artist_pair[1].split(',')
 
             rank = song.select_one('.circle').text
 
             song_ranking = Ranking(
-                name_artist_pair[0],
-                name_artist_pair[1],
+                song_name,
+                artist,
                 self.base_url,
                 rank,
                 week

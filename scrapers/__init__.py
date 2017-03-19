@@ -1,19 +1,16 @@
+from datetime import date
+import os
 from scrapers.DjpunjabScraper import DjpunjabScraper
 from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
-from datetime import date
-import os
 from models.Album import Album
 from models.Song import Song
 from models.Artist import Artist
 from models.ArtistAlbums import ArtistAlbums
 from models.Mp3s import Mp3s
+from models.SongRankings import SongRankings
 from itertools import groupby
 from web.db import *
-
-
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__package__)), 'data')
-JSON_FILENAME = '{}/{}.json' .format(DATA_DIR, date.today())
 
 
 def run_scrapers():
@@ -83,6 +80,30 @@ def save_songs_to_db(songs):
 
     except IOError as error:
         print("Error while inserting new song", error)
+    finally:
+        db.commit()
+        db.close()
+
+
+def save_ranking_to_db(ranking):
+    """
+    Save ranking in song_rankings table
+    """
+    db = get_db()
+
+    try:
+        cursor = db.cursor()
+
+        for rank in ranking:
+            song_name = rank['name']
+            artist_name = rank['artist']
+            source = rank['source']
+            song_rank = rank['ranking']
+            week = rank['week']
+
+            SongRankings(song_name, artist_name, source, song_rank, week).insert(cursor)
+    except IOError as error:
+        print('Error while inserting new ranking ', error)
     finally:
         db.commit()
         db.close()
