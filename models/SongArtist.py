@@ -1,22 +1,22 @@
-class ArtistAlbums():
-    def __init__(self, album_id, artist_id):
-        self.album_id = album_id
+class SongArtist():
+    def __init__(self, song_id, artist_id):
+        self.song_id = song_id
         self.artist_id = artist_id
 
     def _absorb_db_row(self, row):
         self.id = row[0]
-        self.album_id = row[1]
+        self.song_id = row[1]
         self.artist_id = row[2]
 
     def check_duplicate(self, cursor):
         """
-        Returns row from database if artist_albums with same album_id and artist_id exists.
+        Returns row from database if song_artist with same song_id and artist_id exists.
         """
         duplicate_row = cursor.execute(
             """
-            SELECT * FROM artist_albums WHERE album_id = ? AND artist_id = ?
+            SELECT * FROM song_artist WHERE song_id = ? AND artist_id = ?
             """,
-            (self.album_id, self.artist_id)
+            (self.song_id, self.artist_id)
         ).fetchone()
 
         if duplicate_row:
@@ -26,7 +26,7 @@ class ArtistAlbums():
 
     def insert(self, cursor):
         """
-        Insert artist_albums to database. Fail if artist_albums already exists
+        Insert song_artist to database. Fail if song_artist already exists
         """
         if self.check_duplicate(cursor):
             return self
@@ -34,13 +34,13 @@ class ArtistAlbums():
         try:
             id = cursor.execute(
                 """
-                INSERT INTO artist_albums (album_id, artist_id)
+                INSERT INTO song_artist (song_id, artist_id)
                 VALUES (?, ?);
                 """,
-                (self.album_id, self.artist_id)
+                (self.song_id, self.artist_id)
             ).lastrowid
         except Exception as error:
-            print("Error while inserting artist_albums: ", error)
+            print("Error while inserting song_artist: ", error)
             raise error
 
         self.id = id

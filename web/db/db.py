@@ -80,13 +80,16 @@ def get_data(db):
     rows = cursor.execute(
         """
         SELECT song.name AS "song_name", artist.name AS "artist_name",
-               album.name AS "album_name", album.release_date,
-               album.poster_img_url, mp3s.url, mp3s.quality
-        FROM artist_albums
-            INNER JOIN artist ON artist_albums.artist_id = artist.id
-            INNER JOIN album ON artist_albums.album_id = album.id
-            INNER JOIN song ON album.id = song.album_id
-            INNER JOIN mp3s ON song.id = mp3s.song_id;
+               (SELECT name FROM album
+                       WHERE id = song.album_id) AS "album_name",
+               song.release_date,
+               song.poster_img_url,
+               mp3s.url,
+               mp3s.quality
+        FROM song
+               INNER JOIN song_artist ON song.id = song_artist.song_id
+               INNER JOIN artist ON artist.id = song_artist.artist_id
+               INNER JOIN mp3s ON mp3s.song_id = song.id;
         """
     ).fetchall()
 
