@@ -1,5 +1,3 @@
-from datetime import date
-import os
 from scrapers.DjpunjabScraper import DjpunjabScraper
 from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
@@ -9,8 +7,7 @@ from models.Artist import Artist
 from models.ArtistAlbums import ArtistAlbums
 from models.Mp3s import Mp3s
 from models.SongRankings import SongRankings
-from itertools import groupby
-from web.db import *
+from web.db import get_db
 
 
 def run_scrapers():
@@ -107,39 +104,3 @@ def save_ranking_to_db(ranking):
     finally:
         db.commit()
         db.close()
-
-
-def normalize_data(data):
-    """
-    Returns list of songs after removing the duplicate items
-    """
-    songs = []
-
-    for (name, duplicates) in groupby(data, lambda row: row[0]):
-        artist = []
-        album = None
-        release_date = None
-        image_link = None
-        mp3_links = {}
-
-        for row in duplicates:
-            if row[1] not in artist:
-                artist.append(row[1])
-
-            album = album or row[2]
-            release_date = release_date or row[3]
-            image_link = image_link or row[4]
-
-            if row[6] not in mp3_links:
-                mp3_links[row[6]] = row[5]
-
-        songs.append({
-            "name": name,
-            "artist": artist,
-            "album": album,
-            "release_date": release_date,
-            "image_link": image_link,
-            "mp3_links": mp3_links
-        })
-
-    return songs
