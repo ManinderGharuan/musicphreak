@@ -36,7 +36,6 @@ def run_scrapers(app):
         songs += mr.parse()
     except Exception as e:
         print("MrjattScraper failed: ", e)
-        raise "None of the scrapers worked. Sorry bru!"
 
     print('***************************')
     print('**  SAVING SONGS TO DB  ***')

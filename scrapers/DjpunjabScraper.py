@@ -24,6 +24,10 @@ class DjpunjabScraper(RootScraper):
         for link in links:
             link_soup = self.make_soup(link)
             metadata_div = link_soup.find("div", {"class": "cont-a"})
+
+            if metadata_div is None:
+                continue
+
             img = metadata_div.find('img').get('src')
 
             metadata_rows = [
@@ -63,6 +67,6 @@ class DjpunjabScraper(RootScraper):
                     mp3_links['320'] = mp3_link.attrs['href']
 
             song = Song(name, artist, album, self.base_url, img, mp3_links)
-            self.songs.append(song)
+            self.songs.append(song.to_dict())
 
         return self.songs

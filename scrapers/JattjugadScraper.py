@@ -55,6 +55,6 @@ class JattjugadScraper(RootScraper):
                 album = None
 
             song = Song(song_name, artist, album, self.base_url, image_link, mp3_links)
-            self.songs.append(song)
+            self.songs.append(song.to_dict())
 
         return self.songs

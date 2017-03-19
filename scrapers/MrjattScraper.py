@@ -67,6 +67,6 @@ class MrjattScraper(RootScraper):
 
             song = Song(name, artist, album, self.base_url, img, mp3_links,
                         released_date=released_date)
-            self.songs.append(song)
+            self.songs.append(song.to_dict())
 
         return self.songs
