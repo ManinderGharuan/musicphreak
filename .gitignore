@@ -2,3 +2,5 @@
 data/*.json
 *.db
 .idea
+/.fuse_hidden000000f200000005
+*.egg-info
