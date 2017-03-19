@@ -10,7 +10,7 @@ from models.SongRankings import SongRankings
 from web.db import get_db
 
 
-def run_scrapers():
+def run_scrapers(app):
     """
     Returns list of songs after running scrapers.
     """
@@ -38,14 +38,18 @@ def run_scrapers():
         print("MrjattScraper failed: ", e)
         raise "None of the scrapers worked. Sorry bru!"
 
-    return songs
+    print('***************************')
+    print('**  SAVING SONGS TO DB  ***')
+    print('***************************')
+
+    return save_songs_to_db(songs, app)
 
 
-def save_songs_to_db(songs):
+def save_songs_to_db(songs, app):
     """
     Save songs in database
     """
-    db = get_db()
+    db = get_db(app)
 
     try:
         cursor = db.cursor()
