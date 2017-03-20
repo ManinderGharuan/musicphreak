@@ -51,10 +51,13 @@ class Song():
         try:
             cursor.execute(
                 """
-                UPDATE song SET ?=? WHERE id=?;
-                """, (column_name, value, self.id))
+                UPDATE song SET {} = ? WHERE id = ?;
+                """
+                .format(column_name), (value, self.id)
+            )
         except Exception as error:
-            print('Error occurred while updating song release_date', error)
+            print('Error occurred while updating song {}'
+                  .format(column_name), error)
             raise error
 
     def insert(self, cursor):
