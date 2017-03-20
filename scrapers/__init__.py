@@ -1,6 +1,7 @@
 from scrapers.DjpunjabScraper import DjpunjabScraper
 from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
+from scrapers.RadioMirchiScraper import RadioMirchiScraper
 from models.Album import Album
 from models.Song import Song
 from models.Artist import Artist
@@ -88,11 +89,31 @@ def save_songs_to_db(songs, app):
         db.close()
 
 
-def save_ranking_to_db(ranking):
+def run_ranking_scrapers(app):
+    """
+    Returns list of songs after running ranking scrapers.
+    """
+    rankings = []
+
+    try:
+        rm = RadioMirchiScraper()
+
+        rankings += rm.parse()
+    except Exception as e:
+        print("RadioMirchiScraper failed: ", e)
+
+    print('******************************')
+    print('**  SAVING RANKINGS TO DB  ***')
+    print('******************************')
+
+    return save_rankings_to_db(rankings, app)
+
+
+def save_rankings_to_db(ranking, app):
     """
     Save ranking in song_rankings table
     """
-    db = get_db()
+    db = get_db(app)
 
     try:
         cursor = db.cursor()
@@ -104,7 +125,14 @@ def save_ranking_to_db(ranking):
             song_rank = rank['ranking']
             week = rank['week']
 
-            SongRankings(song_name, artist_name, source, song_rank, week).insert(cursor)
+            for artist in artist_name:
+                SongRankings(
+                    song_name,
+                    artist,
+                    source,
+                    song_rank,
+                    week
+                ).insert(cursor)
     except IOError as error:
         print('Error while inserting new ranking ', error)
     finally:

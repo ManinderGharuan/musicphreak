@@ -37,6 +37,6 @@ class RadioMirchiScraper(RootScraper):
                 rank,
                 week
             )
-            self.ranking.append(song_ranking)
+            self.ranking.append(song_ranking.to_dict())
 
         return self.ranking
