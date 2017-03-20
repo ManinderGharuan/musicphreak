@@ -7,7 +7,7 @@ CREATE TABLE song (
        release_date DATE,
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-       FOREIGN KEY(album_id) REFERENCES album(id),
+       FOREIGN KEY(album_id) REFERENCES album(id)
 );
 
 DROP TABLE IF EXISTS album;
