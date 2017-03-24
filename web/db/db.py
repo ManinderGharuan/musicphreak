@@ -47,6 +47,7 @@ def normalize_data(data):
         release_date = None
         image_link = None
         mp3_links = {}
+        sorted_mp3_links = {}
 
         for row in duplicates:
             if row[1] not in artist:
@@ -59,13 +60,16 @@ def normalize_data(data):
             if row[6] not in mp3_links:
                 mp3_links[row[6]] = row[5]
 
+        for quality in sorted(mp3_links):
+            sorted_mp3_links[quality] = mp3_links.get(quality)
+
         songs.append({
             "name": name,
             "artist": artist,
             "album": album,
             "release_date": release_date,
             "image_link": image_link,
-            "mp3_links": mp3_links
+            "mp3_links": sorted_mp3_links
         })
 
     return songs
