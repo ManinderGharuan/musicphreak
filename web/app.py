@@ -7,7 +7,9 @@ app = Flask(__name__)
 
 # Load default config and override config from an environment variable
 app.config.update(dict(
-    DATABASE=path.join(path.dirname(app.root_path), 'musicphreak.db')
+    DATABASE=path.join(path.dirname(app.root_path), 'musicphreak.db'),
+    SCRAPER_DB=path.join(path.join(path.dirname(app.root_path),
+                                   'scrapers'), 'scraper.db')
 ))
 
 add_cli(app)
