@@ -7,9 +7,9 @@ class MrjattScraper(RootScraper):
     """
      Creates scraper which scraps mr-jatt.com for top 20 songs
     """
-    def __init__(self):
+    def __init__(self, app):
         start_url = 'https://mr-jatt.com/punjabisong-top20-singletracks.html'
-        super().__init__(start_url)
+        super().__init__(start_url, app)
 
         self.base_url = 'https://mr-jatt.com'
 
@@ -23,8 +23,16 @@ class MrjattScraper(RootScraper):
 
         for link in links:
             link_soup = self.make_soup(link)
+
+            if not link_soup:
+                continue
+
             metadata_div = link_soup.find('div', {'class': 'albumCoverSmall'})
-            img = metadata_div.find('img').get('src')
+
+            try:
+                img = metadata_div.find('img').get('src')
+            except AttributeError:
+                continue
 
             name = None
             artist = None
@@ -68,5 +76,6 @@ class MrjattScraper(RootScraper):
             song = Song(name, artist, album, self.base_url, img, mp3_links,
                         released_date=released_date)
             self.songs.append(song.to_dict())
+            self.on_success(link)
 
         return self.songs

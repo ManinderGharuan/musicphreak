@@ -6,9 +6,9 @@ class DjpunjabScraper(RootScraper):
     """
     Creates scraper which scraps djpunjab.com for top 20 songs
     """
-    def __init__(self):
+    def __init__(self, app):
         start_url = 'http://djpunjab.com/page/top20.html?type=week'
-        super().__init__(start_url)
+        super().__init__(start_url, app)
 
         self.base_url = 'http://djpunjab.com'
 
@@ -23,6 +23,10 @@ class DjpunjabScraper(RootScraper):
 
         for link in links:
             link_soup = self.make_soup(link)
+
+            if not link_soup:
+                continue
+
             metadata_div = link_soup.find("div", {"class": "cont-a"})
 
             if metadata_div is None:
@@ -68,5 +72,6 @@ class DjpunjabScraper(RootScraper):
 
             song = Song(name, artist, album, self.base_url, img, mp3_links)
             self.songs.append(song.to_dict())
+            self.on_success(link)
 
         return self.songs

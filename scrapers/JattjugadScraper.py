@@ -6,9 +6,9 @@ class JattjugadScraper(RootScraper):
     """
     Creates scraper which scraps jattjugad.com for top 20 songs
     """
-    def __init__(self):
+    def __init__(self, app):
         start_url = 'http://jattjugad.xyz/mu/index.php?tnz=top20songs&cat=Punjabi_SinGle_Track&t=30days'
-        super().__init__(start_url)
+        super().__init__(start_url, app)
 
         self.base_url = 'http://jattjugad.xyz'
 
@@ -24,6 +24,10 @@ class JattjugadScraper(RootScraper):
 
         for link in links:
             link_soup = self.make_soup(link)
+
+            if not link_soup:
+                continue
+
             mp3_links = {}
 
             for tag_td in link_soup.find_all('td'):
@@ -56,5 +60,6 @@ class JattjugadScraper(RootScraper):
 
             song = Song(song_name, artist, album, self.base_url, image_link, mp3_links)
             self.songs.append(song.to_dict())
+            self.on_success(link)
 
         return self.songs

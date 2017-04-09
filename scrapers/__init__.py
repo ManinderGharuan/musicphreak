@@ -18,21 +18,21 @@ def run_scrapers(app):
     songs = []
 
     try:
-        jt = JattjugadScraper()
+        jt = JattjugadScraper(app)
 
         songs += jt.parse()
     except Exception as e:
         print("JattjugadScraper failed: ", e)
 
     try:
-        dj = DjpunjabScraper()
+        dj = DjpunjabScraper(app)
 
         songs += dj.parse()
     except Exception as e:
         print("DjpunjabScraper failed: ", e)
 
     try:
-        mr = MrjattScraper()
+        mr = MrjattScraper(app)
 
         songs += mr.parse()
     except Exception as e:
