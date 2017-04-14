@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from requests import get
 import random
+from datetime import date
 from scrapers.db import get_db
 
 user_agents = [
@@ -17,9 +18,8 @@ class RootScraper():
     Root class to be subclassed by other scrapers. Provide common functionality
     for all scrapers.
     """
-    def __init__(self, start_url, app):
+    def __init__(self, app):
         self.app = app
-        self.soup = self.make_soup(start_url)
         self.songs = []
         self.ranking = []
 
@@ -31,7 +31,7 @@ class RootScraper():
             cursor = db.cursor()
             available = cursor.execute(
                 """
-                SELECT url FROM urls WHERE url = ?;
+                SELECT url FROM urls WHERE url = ? and scraped_at is not null;
                 """,
                 (url,)
             ).fetchone()
@@ -75,12 +75,83 @@ class RootScraper():
             cursor = db.cursor()
             cursor.execute(
                 """
-                INSERT INTO urls (url) VALUES (?);
+                UPDATE urls set scraped_at = ? where url = ?;
                 """,
-                (url,)
+                (date.today(), url)
             )
         except Exception as error:
             print("Error while inserting url: ", error)
         finally:
             db.commit()
+            db.close()
+
+    def check_duplicate(self, url):
+        """
+        checks if ~url~ is already in scraper database or not
+        """
+        db = get_db()
+        is_duplicate = False
+
+        try:
+            cursor = db.cursor()
+            available = cursor.execute(
+                """
+                SELECT url FROM urls WHERE url = ?;
+                """,
+                (url,)
+            ).fetchone()
+
+            if available and available[0]:
+                is_duplicate = True
+
+        except Exception as error:
+            self.app.logger.debug("Error while checking url duplicate: ", error)
+        finally:
+            db.close()
+
+        return is_duplicate
+
+    def scrap_in_future(self, url):
+        """
+        Insert next scrap link in scraper database
+        """
+        if self.check_duplicate(url):
+            return None
+
+        self.app.logger.info('Will scrap "{}" in future'.format(url))
+
+        db = get_db()
+
+        try:
+            cursor = db.cursor()
+            cursor.execute(
+                """
+                INSERT INTO urls (url, scraped_at) VALUES (?, null);
+                """,
+                (url,)
+            )
+        except Exception as error:
+            print("error while inserting scraped url: ", error)
+        finally:
+            db.commit()
+            db.close()
+
+    def get_next_links(self):
+        """
+        Returns next link from scraper database
+        """
+        db = get_db()
+
+        try:
+            cursor = db.cursor()
+            urls = cursor.execute(
+                """
+                SELECT url FROM urls WHERE scraped_at is null;
+                """
+            ).fetchall()
+
+            return urls
+        except Exception as error:
+            print("Error while fetching url from scraper database: ", error)
+        finally:
             db.close()
