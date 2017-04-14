@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from scrapers.RootScraper import RootScraper
 from .Items import Song
 
@@ -62,45 +62,29 @@ class DjpunjabScraper(RootScraper):
 
         return Song(name, artist, album, self.base_url, img, mp3_links)
 
-    def extract_next_links(self, soup):
+    def extract_next_links(self, soup, base_url):
         """
         Returns links to scrap next from the soup
         """
-        next_links = []
-        page_path = None
+        next_links = set()
 
         for a in soup.select('a'):
-            link = a.get('href')
+            link = urljoin(self.base_url, a.get('href'))
 
-            if (
-                    link is None
-                    or '#' in link
-                    or link == self.base_url
-                    or link == self.base_url + '/'
-                    or '&type=' in urlparse(link).query
-                    or 'player=' in urlparse(link).query
-                    or '/facebook_image' in urlparse(link).path
-                    or 'all_images' in urlparse(link).path
-                    or 'index.php' in urlparse(link).path
-                    or 'recommended.html' in urlparse(link).path
-                    or '/policy' in urlparse(link).path
-                    or '/search' in urlparse(link).path
-            ):
-                continue
-
-            if not page_path:
-                if len(urlparse(link).path.split('/')) > 1:
-                    page_path = (urlparse(link).path.split('/'))[1]
-
-            if './' in urlparse(link).path:
-                next_links.append(self.base_url + '/' +
-                                  page_path + link.replace('./', '/'))
-            elif urlparse(link).hostname is None:
-                next_links.append(self.base_url + link)
-            elif urlparse(link).hostname in self.whitelist:
-                next_links.append(link)
+            if urlparse(link).hostname in self.whitelist:
+                next_links.add(link)
 
         return next_links
+
+    def soup_has_item(self, soup):
+        for a in soup.select('p > a'):
+                if (
+                        a.attrs['href'].endswith('.mp3')
+                        and soup.find("div", {"class": "cont-a"}) is not None
+                ):
+                    return True
+
+        return False
 
     def parse(self):
         """
@@ -108,40 +92,30 @@ class DjpunjabScraper(RootScraper):
         """
         links = self.rescrapables
 
-        if self.done_rescrapables:
-            links = self.get_next_links()
-        else:
-            self.done_rescrapables = True
+        while links:
+            if self.done_rescrapables:
+                links = self.get_next_links()
+            else:
+                self.done_rescrapables = True
 
-        if not links:
-            return self.songs
+            for link in links:
+                next_links = []
+                song = None
 
-        for link in links:
-            maybe_item_link = False
-            next_links = None
+                try:
+                    soup = self.make_soup(link)
+                except Exception:
+                    continue
 
-            soup = self.make_soup(link)
+                if self.soup_has_item(soup):
+                    song = self.extract_item(soup)
+                    self.songs.append(song)
 
-            if not soup:
-                continue
+                next_links = self.extract_next_links(soup, link)
 
-            for a in soup.select('p > a'):
-                if (
-                        a.attrs['href'].endswith('.mp3')
-                        and soup.find("div", {"class": "cont-a"}) is not None
-                ):
-                    maybe_item_link = True
+                for l in next_links:
+                    self.scrap_in_future(l)
 
-            if maybe_item_link:
-                song = self.extract_item(soup)
-                self.songs.append(song.to_dict())
+                self.on_success(link)
 
                 yield song
-            else:
-                next_links = self.extract_next_links(soup)
-
-                for link in next_links:
-                    self.scrap_in_future(link)
-
-            self.on_success(link)
-            yield

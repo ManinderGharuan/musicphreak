@@ -40,7 +40,7 @@ class RootScraper():
                 already_scraped = True
 
         except Exception as error:
-            self.app.logger.debug("Error while checking url scraped: ", error)
+            self.app.logger.debug("Error while checking if url is already scraped: " + error)
         finally:
             db.close()
 
@@ -51,7 +51,7 @@ class RootScraper():
         Takes a url, and return BeautifulSoup for that Url
         """
         if self.is_scraped(url):
-            return None
+            raise Exception('Already scraped')
 
         header = {
             'user-agent': random.choice(user_agents)
@@ -70,6 +70,7 @@ class RootScraper():
 
     def on_success(self, url):
         db = get_db()
+        print('Done with', url)
 
         try:
             cursor = db.cursor()
@@ -118,8 +119,6 @@ class RootScraper():
         if self.check_duplicate(url):
             return None
 
-        self.app.logger.info('Will scrap "{}" in future'.format(url))
-
         db = get_db()
 
         try:
@@ -133,6 +132,7 @@ class RootScraper():
         except Exception as error:
             print("error while inserting scraped url: ", error)
         finally:
+            print('Will scrap', url, 'in future')
             db.commit()
             db.close()
 
@@ -150,7 +150,7 @@ class RootScraper():
                 """
             ).fetchall()
 
-            return urls
+            return (url[0] for url in urls)
         except Exception as error:
             print("Error while fetching url from scraper database: ", error)
         finally:
