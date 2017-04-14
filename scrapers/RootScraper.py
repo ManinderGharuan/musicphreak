@@ -86,53 +86,24 @@ class RootScraper():
             db.commit()
             db.close()
 
-    def check_duplicate(self, url):
-        """
-        checks if ~url~ is already in scraper database or not
-        """
-        db = get_db()
-        is_duplicate = False
-
-        try:
-            cursor = db.cursor()
-            available = cursor.execute(
-                """
-                SELECT url FROM urls WHERE url = ?;
-                """,
-                (url,)
-            ).fetchone()
-
-            if available and available[0]:
-                is_duplicate = True
-
-        except Exception as error:
-            self.app.logger.debug("Error while checking url duplicate: ", error)
-        finally:
-            db.close()
-
-        return is_duplicate
-
-    def scrap_in_future(self, url):
+    def scrap_in_future(self, urls):
         """
         Insert next scrap link in scraper database
         """
-        if self.check_duplicate(url):
-            return None
-
         db = get_db()
 
         try:
             cursor = db.cursor()
-            cursor.execute(
+            cursor.executemany(
                 """
-                INSERT INTO urls (url, scraped_at) VALUES (?, null);
+                INSERT OR IGNORE INTO urls (url, scraped_at) VALUES (?, null);
                 """,
-                (url,)
+                (urls)
             )
         except Exception as error:
             print("error while inserting scraped url: ", error)
         finally:
-            print('Will scrap', url, 'in future')
+            self.app.logger.info("will scrap {} in future".format(urls))
             db.commit()
             db.close()
 
@@ -143,15 +114,16 @@ class RootScraper():
         db = get_db()
 
         try:
-            cursor = db.cursor()
-            urls = cursor.execute(
-                """
-                SELECT url FROM urls WHERE scraped_at is null;
-                """
-            ).fetchall()
+            while True:
+                cursor = db.cursor()
+                urls = cursor.execute(
+                    """
+                    SELECT url FROM urls WHERE scraped_at is null;
+                    """
+                ).fetchmany(100)
 
-            return (url[0] for url in urls)
+                for url in urls:
+                    db.close()
+                    yield url[0]
         except Exception as error:
             print("Error while fetching url from scraper database: ", error)
-        finally:
-            db.close()

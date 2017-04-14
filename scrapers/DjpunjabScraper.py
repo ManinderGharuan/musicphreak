@@ -10,7 +10,15 @@ class DjpunjabScraper(RootScraper):
     def __init__(self, app):
         super().__init__(app)
         self.whitelist = ['djpunjab.com']
-        self.rescrapables = ['http://djpunjab.com']
+        self.rescrapables = [
+            'http://djpunjab.com',
+            'http://djpunjab.com/latest_update.php',
+            'http://djpunjab.com/page/top20.html?type=week',
+            'http://djpunjab.com/page/top20_month.html',
+            'http://djpunjab.com/latest-bollywood-top-songs.html',
+            'http://djpunjab.com/page/latest.html',
+            'http://djpunjab.com/punjabi_music/latest.php?&id=2'
+        ]
         self.done_rescrapables = False
         self.base_url = 'http://djpunjab.com'
 
@@ -72,7 +80,7 @@ class DjpunjabScraper(RootScraper):
             link = urljoin(self.base_url, a.get('href'))
 
             if urlparse(link).hostname in self.whitelist:
-                next_links.add(link)
+                next_links.add((link,))
 
         return next_links
 
@@ -113,9 +121,10 @@ class DjpunjabScraper(RootScraper):
 
                 next_links = self.extract_next_links(soup, link)
 
-                for l in next_links:
-                    self.scrap_in_future(l)
+                self.scrap_in_future(list(next_links))
 
                 self.on_success(link)
 
                 yield song
+
+        return self.songs
