@@ -1,10 +1,9 @@
 class Song():
-    def __init__(self, name, album_id, poster_img_url, release_date, artist_id):
+    def __init__(self, name, album_id, poster_img_url, release_date):
         self.name = name
         self.album_id = album_id
         self.poster_img_url = poster_img_url
         self.release_date = release_date
-        self.artist_id = artist_id
 
     def _absorb_db_row(self, row, cursor):
         self.id = row[0]
@@ -31,12 +30,9 @@ class Song():
         """
         duplicate_row = cursor.execute(
             """
-           SELECT song.* FROM artist
-            INNER JOIN song_artist ON song_artist.artist_id = artist.id
-            INNER JOIN song ON song.id = song_artist.song_id
-            WHERE song.name=? AND artist.id=?;
+            SELECT id FROM song WHERE name = ?;
             """,
-            (self.name, self.artist_id)
+            (self.name,)
         ).fetchone()
 
         if duplicate_row:
