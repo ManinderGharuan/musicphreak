@@ -5,7 +5,7 @@ from .Items import Song
 
 class DjpunjabScraper(RootScraper):
     """
-    Creates scraper which scraps djpunjab.com for top 20 songs
+    Creates scraper which scraps djpunjab.com
     """
     def __init__(self, app):
         super().__init__(app)
@@ -36,16 +36,27 @@ class DjpunjabScraper(RootScraper):
         ]
 
         name = None
-        artist = None
+        artists = []
+        album = None
 
         for text in metadata_rows:
             if text[0].lower() == 'track':
                 name = text[1]
 
             if text[0].lower() == 'artist':
-                artist = [i.strip() for i in text[1].split(',')]
+                artists += [{'name': i.strip(), 'type': 'singer'}
+                            for i in text[1].split(',')]
 
-            album = None
+            if text[0].lower() == 'album':
+                album = text[1]
+
+            if text[0].lower() == 'lyrics':
+                artists += [{'name': i.strip(), 'type': 'lyricist'}
+                            for i in text[1].split(',')]
+
+            if text[0].lower() == 'music':
+                artists += [{'name': i.strip(), 'type': 'music_composer'}
+                            for i in text[1].split(',')]
 
         mp3_links = {}
         maybe_mp3_links = []
@@ -68,7 +79,20 @@ class DjpunjabScraper(RootScraper):
             if '320 Kbps' in mp3_link.text:
                 mp3_links['320'] = mp3_link.attrs['href']
 
-        return Song(name, artist, album, self.base_url, img, mp3_links)
+        lyrics_soup = None
+        lyrics = None
+
+        for a in soup.select('a'):
+            if 'view more' in a.text.lower():
+                lyrics_soup = self.make_soup(
+                    urljoin(self.base_url, a.attrs['href'])
+                )
+
+        if lyrics_soup:
+            lyrics = self.extract_lyrics(lyrics_soup)
+
+        return Song(name, artists, album, self.base_url,
+                    img, mp3_links, lyrics=lyrics)
 
     def extract_next_links(self, soup, base_url):
         """
@@ -83,6 +107,12 @@ class DjpunjabScraper(RootScraper):
                 next_links.add((link,))
 
         return next_links
+
+    def extract_lyrics(self, soup):
+        """
+        Returns lyrics from soup
+        """
+        return soup.find('span').text
 
     def soup_has_item(self, soup):
         for a in soup.select('p > a'):
@@ -101,6 +131,7 @@ class DjpunjabScraper(RootScraper):
         links = self.rescrapables
 
         while links:
+
             if self.done_rescrapables:
                 links = self.get_next_links()
             else:
@@ -122,7 +153,6 @@ class DjpunjabScraper(RootScraper):
                 next_links = self.extract_next_links(soup, link)
 
                 self.scrap_in_future(list(next_links))
-
                 self.on_success(link)
 
                 yield song
