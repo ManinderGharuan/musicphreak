@@ -5,29 +5,19 @@ class Song():
     """
     Represents a single song extracted by scrapers
     """
-    def __init__(self, name, artist, album, source, image_link='',
-                 mp3_links={}, released_date=None):
+    def __init__(self, name, artists, album, source, image_link='',
+                 mp3_links={}, released_date=None, lyrics=None):
         self.name = name
-        self.artist = artist
+        self.artists = artists
         self.album = album
+        self.lyrics = lyrics
         self.source = urlparse(source).hostname
         self.image_link = image_link
         self.mp3_links = mp3_links
         self.released_date = released_date
 
     def __repr__(self):
-        return "<name: {} artist: {}>".format(self.name, self.artist)
-
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "artist": self.artist,
-            "album": self.album,
-            "source": self.source,
-            "image_link": self.image_link,
-            "mp3_links": self.mp3_links,
-            "released_date": self.released_date
-        }
+        return "<name: {} artists: {}>".format(self.name, self.artists)
 
 
 class Ranking():
@@ -39,13 +29,5 @@ class Ranking():
         self.week = week_start_date
 
     def __repr__(self):
-        return "<name: {} ranking: {} week: {}>".format(self.name, self.ranking, self.week)
-
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "artist": self.artist,
-            "source": self.source,
-            "ranking": self.ranking,
-            "week": self.week
-        }
+        return "<name: {} ranking: {} week: {}>" \
+            .format(self.name, self.ranking, self.week)

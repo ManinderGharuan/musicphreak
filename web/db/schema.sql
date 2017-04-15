@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS song;
 CREATE TABLE song (
        id INTEGER PRIMARY KEY autoincrement,
        name TEXT NOT NULL,
+       lyrics TEXT,
        album_id INTEGER,
        poster_img_url TEXT,
        release_date DATE,
@@ -22,6 +23,7 @@ DROP TABLE IF EXISTS artist;
 CREATE TABLE artist (
        id INTEGER PRIMARY KEY autoincrement,
        name TEXT NOT NULL,
+       type TEXT NOT NULL DEFAULT "singer",
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

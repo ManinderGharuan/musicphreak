@@ -20,23 +20,32 @@ def run_scrapers(app):
     try:
         jt = JattjugadScraper(app)
 
-        songs += jt.parse()
+        for song in jt.parse():
+            if song:
+                app.logger.info("Got a song {}".format(song))
+                songs.append(song)
     except Exception as e:
         print("JattjugadScraper failed: ", e)
 
     try:
         dj = DjpunjabScraper(app)
 
-        songs += dj.parse()
+        for song in dj.parse():
+            if song:
+                app.logger.info("Got a song {}".format(song))
+                songs.append(song)
     except Exception as e:
         print("DjpunjabScraper failed: ", e)
 
-    try:
-        mr = MrjattScraper(app)
+    # try:
+    #     mr = MrjattScraper(app)
 
-        songs += mr.parse()
-    except Exception as e:
-        print("MrjattScraper failed: ", e)
+    #     for song in mr.parse():
+    #         if song:
+    #             app.logger.info("Got a song {}".format(song))
+    #             songs.append(song)
+    # except Exception as e:
+    #     print("MrjattScraper failed: ", e)
 
     print('***************************')
     print('**  SAVING SONGS TO DB  ***')
@@ -55,27 +64,30 @@ def save_songs_to_db(songs, app):
         cursor = db.cursor()
 
         for song in songs:
-            song_name = song['name']
-            artist_names = song['artist']
-            album_name = song['album']
-            source = song['source']
-            poster_url = song['image_link']
-            mp3_links = song['mp3_links']
-            release_date = song['released_date']
+            song_name = song.name
+            artists = song.artists
+            lyrics = song.lyrics
+            album_name = song.album
+            source = song.source
+            poster_url = song.image_link
+            mp3_links = song.mp3_links
+            release_date = song.released_date
             album_id = None
 
             if album_name is not None:
                 album_id = Album(album_name).insert(cursor).id
 
-            for name in (artist_names or ['N/A']):
-                artist_id = Artist(name).insert(cursor).id
-                song_id = Song(
+            song_id = Song(
                     song_name,
+                    lyrics,
                     album_id,
                     poster_url,
-                    release_date,
-                    artist_id
+                    release_date
                 ).insert(cursor).id
+
+            for artist in (artists or [{'name': None, type: None}]):
+                artist_id = Artist(artist['name'], artist['type']) \
+                            .insert(cursor).id
                 SongArtist(song_id, artist_id).insert(cursor)
 
             for quality in mp3_links:

@@ -1,12 +1,13 @@
 class Artist():
-    def __init__(self, name):
+    def __init__(self, name, artist_type):
         self.name = name
+        self.artist_type = artist_type
 
     def _absorb_db_row(self, row, cursor):
         self.id = row[0]
         name = row[1]
 
-        if name == 'N/A' and self.name != 'N/A':
+        if name is None and self.name is not None:
             name = self.name
             self.update_name(cursor)
 
@@ -22,7 +23,7 @@ class Artist():
                 UPDATE artist SET name=? WHERE id=?
                 """, (self.name, self.id))
         except Exception as error:
-            print('Error occurred while updating album name', error)
+            print('Error occurred while updating Artist name', error)
             raise error
 
     def check_duplicate(self, cursor):
@@ -31,9 +32,9 @@ class Artist():
         """
         duplicate_row = cursor.execute(
             """
-            SELECT * FROM artist WHERE name = ?
+            SELECT * FROM artist WHERE name = ? AND type = ?
             """,
-            (self.name,)
+            (self.name, self.artist_type)
         ).fetchone()
 
         if duplicate_row:
@@ -51,10 +52,10 @@ class Artist():
         try:
             id = cursor.execute(
                 """
-                INSERT INTO artist (name)
-                VALUES (?);
+                INSERT INTO artist (name, type)
+                VALUES (?, ?);
                 """,
-                (self.name,)
+                (self.name, self.artist_type)
             ).lastrowid
         except Exception as error:
             print("Error while inserting artist: ", error)
