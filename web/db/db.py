@@ -94,6 +94,7 @@ def get_data(db):
                INNER JOIN song_artist ON song.id = song_artist.song_id
                INNER JOIN artist ON artist.id = song_artist.artist_id
                INNER JOIN mp3s ON mp3s.song_id = song.id
+        WHERE artist.type = 'singer'
         ORDER BY song_name;
         """
     ).fetchall()
