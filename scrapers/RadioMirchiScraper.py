@@ -9,35 +9,55 @@ class RadioMirchiScraper(RootScraper):
     """
     def __init__(self, app):
         super().__init__(app)
-        start_url = 'http://www.radiomirchi.com/more/punjabi-top-10/'
-        self.soup = super().make_soup(start_url)
-
+        self.urls_to_scrap = {
+            'punjabi': 'http://www.radiomirchi.com/more/punjabi-top-10/',
+            'hindi': 'http://www.radiomirchi.com/more/mirchi-top-20/'
+        }
         self.base_url = 'http://www.radiomirchi.com'
 
     def parse(self):
         """
         Returns list of `Song`s and assign them to `self.Song`
         """
-        song_containers = self.soup.select('.top01')
-        song_date = self.soup.find('a', {'class': 'select'}).text.split('-')[0].strip() + ' ' + str(date.today().year)
 
-        week = datetime.strptime(song_date, '%b %d %Y')
+        for (ranking_type, link) in self.urls_to_scrap.items():
+            try:
+                soup = self.make_soup(link)
+            except Exception:
+                continue
 
-        for song in song_containers:
-            name_artist_pair = song.find('h3').text
-            name_artist_pair = [i.strip() for i in name_artist_pair.split('\n')]
-            song_name = name_artist_pair[0].strip()
-            artist = [i.strip() for i in name_artist_pair[1].split(',')]
+            song_date = soup.find(
+                'a', {'class': 'select'}
+            ).text.split('-')[0].strip() + ' ' + str(date.today().year)
 
-            rank = song.select_one('.circle').text
+            week = datetime.strptime(song_date, '%b %d %Y')
 
-            song_ranking = Ranking(
-                song_name,
-                artist,
-                self.base_url,
-                rank,
-                week
-            )
-            self.ranking.append(song_ranking)
+            song_containers = soup.select('.top01')
 
-        return self.ranking
+            for song in song_containers:
+                song_name = None
+                artist = []
+                rank = None
+
+                name_artist_pair = song.find('h3').text
+                name_artist_pair = [
+                    i.strip() for i in name_artist_pair.split('\n')
+                ]
+                song_name = name_artist_pair[0].strip()
+                artist = [
+                    i.strip() for i in name_artist_pair[1].split(',')
+                ]
+
+                rank = song.select_one('.circle').text
+
+                song_ranking = Ranking(
+                    song_name,
+                    artist,
+                    self.base_url,
+                    rank,
+                    week
+                )
+                self.ranking.append(song_ranking)
+
+            return
+            return self.ranking
