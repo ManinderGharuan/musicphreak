@@ -4,9 +4,10 @@ from models.SongArtist import SongArtist
 
 
 class SongRankings():
-    def __init__(self, song, artist, source, rank, week):
+    def __init__(self, song, artist, youtube_id, source, rank, week):
         self.song = song
         self.artist = artist
+        self.youtube_id = youtube_id
         self.source = source
         self.rank = rank
         self.week = week
@@ -47,12 +48,27 @@ class SongRankings():
                 INNER JOIN artist ON song_artist.artist_id = artist.id
                 WHERE song.name=? and artist.name=?;
                 """,
-                (self.song, self.artist.strip())
+                (self.song, self.artist)
             ).fetchone()
 
             return song_artist_id
         except Exception as error:
             print("Error while selecting song_id and artist_id: ", error)
+            raise error
+
+    def update_youtube_id(self, cursor, song_id):
+        """
+        Update youtube_id in song table
+        """
+        try:
+            cursor.execute(
+                """
+                UPDATE song SET youtube_id = ? WHERE id = ?;
+                """,
+                (self.youtube_id, song_id)
+            )
+        except Exception as error:
+            print("Does not update youtube id because of: ", error)
             raise error
 
     def insert(self, cursor):
@@ -68,12 +84,15 @@ class SongRankings():
                            None,
                            None,
                            None,
-                           None).insert(cursor).id
+                           None,
+                           self.youtube_id).insert(cursor).id
             SongArtist(song_id,
                        artist_id).insert(cursor)
         else:
             song_id = song_artist_id[0]
             artist_id = song_artist_id[1]
+
+            self.update_youtube_id(cursor, song_id)
 
         if self.check_duplicate(cursor):
             return self

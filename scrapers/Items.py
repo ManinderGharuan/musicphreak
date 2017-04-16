@@ -6,7 +6,8 @@ class Song():
     Represents a single song extracted by scrapers
     """
     def __init__(self, name, artists, album, source, image_link='',
-                 mp3_links={}, released_date=None, lyrics=None):
+                 mp3_links={}, released_date=None, lyrics=None,
+                 youtube_id=None):
         self.name = name
         self.artists = artists
         self.album = album
@@ -15,15 +16,18 @@ class Song():
         self.image_link = image_link
         self.mp3_links = mp3_links
         self.released_date = released_date
+        self.youtube_id = youtube_id
 
     def __repr__(self):
         return "<name: {} artists: {}>".format(self.name, self.artists)
 
 
 class Ranking():
-    def __init__(self, name, artist, source, ranking, week_start_date):
+    def __init__(self, name, artist, youtube_id,
+                 source, ranking, week_start_date):
         self.name = name
         self.artist = artist
+        self.youtube_id = youtube_id
         self.source = source
         self.ranking = int(ranking)
         self.week = week_start_date

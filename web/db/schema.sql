@@ -6,6 +6,7 @@ CREATE TABLE song (
        album_id INTEGER,
        poster_img_url TEXT,
        release_date DATE,
+       youtube_id TEXT,
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        FOREIGN KEY(album_id) REFERENCES album(id)

@@ -1,10 +1,12 @@
 class Song():
-    def __init__(self, name, lyrics, album_id, poster_img_url, release_date):
+    def __init__(self, name, lyrics, album_id, poster_img_url, release_date,
+                 youtube_id):
         self.name = name
         self.lyrics = lyrics
         self.album_id = album_id
         self.poster_img_url = poster_img_url
         self.release_date = release_date
+        self.youtube_id = youtube_id
 
     def _absorb_db_row(self, row, cursor):
         self.id = row[0]
@@ -13,6 +15,7 @@ class Song():
         album_id = row[3]
         poster_img_url = row[4]
         release_date = row[5]
+        youtube_id = row[6]
 
         if not lyrics and self.lyrics:
             lyrics = self.lyrics
@@ -30,10 +33,15 @@ class Song():
             release_date = self.release_date
             self.update_changes(cursor, "release_date", self.release_date)
 
+        if not youtube_id and self.youtube_id:
+            youtube_id = self.youtube_id
+            self.update_changes(cursor, 'youtube_id', self.youtube_id)
+
         self.lyrics = lyrics
         self.album_id = album_id
         self.poster_img_url = poster_img_url
         self.release_date = release_date
+        self.youtube_id = youtube_id
 
     def check_duplicate(self, cursor):
         """
@@ -82,15 +90,17 @@ class Song():
                    lyrics,
                    album_id,
                    poster_img_url,
-                   release_date
+                   release_date,
+                   youtube_id
                 )
-                VALUES (?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?);
                 """, (
                     self.name,
                     self.lyrics,
                     self.album_id,
                     self.poster_img_url,
-                    self.release_date
+                    self.release_date,
+                    self.youtube_id
                 )
             ).lastrowid
         except Exception as error:

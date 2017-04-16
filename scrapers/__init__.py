@@ -74,6 +74,7 @@ def save_song_to_db(song, db):
         poster_url = song.image_link
         mp3_links = song.mp3_links
         release_date = song.released_date
+        youtube_id = song.youtube_id
         album_id = None
 
         if album_name is not None:
@@ -84,7 +85,8 @@ def save_song_to_db(song, db):
             lyrics,
             album_id,
             poster_url,
-            release_date
+            release_date,
+            youtube_id
         ).insert(cursor).id
 
         for artist in (artists or [{'name': None, type: None}]):
@@ -133,6 +135,7 @@ def save_rankings_to_db(ranking, app):
         for rank in ranking:
             song_name = rank.name
             artist_name = rank.artist
+            youtube_id = rank.youtube_id
             source = rank.source
             song_rank = rank.ranking
             week = rank.week
@@ -141,6 +144,7 @@ def save_rankings_to_db(ranking, app):
                 SongRankings(
                     song_name,
                     artist,
+                    youtube_id,
                     source,
                     song_rank,
                     week
