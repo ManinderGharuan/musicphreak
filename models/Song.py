@@ -9,7 +9,14 @@ class Song():
     def _absorb_db_row(self, row, cursor):
         self.id = row[0]
         self.name = row[1]
+        lyrics = row[2]
         album_id = row[3]
+
+        if not lyrics and self.lyrics:
+            lyrics = self.lyrics
+            self.update_changes(cursor, "lyrics", self.lyrics)
+
+        self.lyrics = lyrics
 
         if not album_id and self.album_id:
             album_id = self.album_id
