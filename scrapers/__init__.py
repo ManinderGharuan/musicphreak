@@ -15,7 +15,8 @@ def run_scrapers(app):
     """
     Returns list of songs after running scrapers.
     """
-    songs = []
+    song_count = 0
+    db = get_db(app)
 
     try:
         jt = JattjugadScraper(app)
@@ -23,7 +24,9 @@ def run_scrapers(app):
         for song in jt.parse():
             if song:
                 app.logger.info("Got a song {}".format(song))
-                songs.append(song)
+                song_count += 1
+
+                save_song_to_db(song, db)
     except Exception as e:
         print("JattjugadScraper failed: ", e)
 
@@ -33,7 +36,9 @@ def run_scrapers(app):
         for song in dj.parse():
             if song:
                 app.logger.info("Got a song {}".format(song))
-                songs.append(song)
+                song_count += 1
+
+                save_song_to_db(song, db)
     except Exception as e:
         print("DjpunjabScraper failed: ", e)
 
@@ -47,58 +52,53 @@ def run_scrapers(app):
     # except Exception as e:
     #     print("MrjattScraper failed: ", e)
 
-    print('***************************')
-    print('**  SAVING SONGS TO DB  ***')
-    print('***************************')
+    db.close()
 
-    return save_songs_to_db(songs, app)
+    print('******************************')
+    print('**  SAVED {} SONGS TO DB  ***'.format(song_count))
+    print('******************************')
 
 
-def save_songs_to_db(songs, app):
+def save_song_to_db(song, db):
     """
-    Save songs in database
+    Save song in database
     """
-    db = get_db(app)
-
     try:
         cursor = db.cursor()
 
-        for song in songs:
-            song_name = song.name
-            artists = song.artists
-            lyrics = song.lyrics
-            album_name = song.album
-            source = song.source
-            poster_url = song.image_link
-            mp3_links = song.mp3_links
-            release_date = song.released_date
-            album_id = None
+        song_name = song.name
+        artists = song.artists
+        lyrics = song.lyrics
+        album_name = song.album
+        source = song.source
+        poster_url = song.image_link
+        mp3_links = song.mp3_links
+        release_date = song.released_date
+        album_id = None
 
-            if album_name is not None:
-                album_id = Album(album_name).insert(cursor).id
+        if album_name is not None:
+            album_id = Album(album_name).insert(cursor).id
 
-            song_id = Song(
-                    song_name,
-                    lyrics,
-                    album_id,
-                    poster_url,
-                    release_date
-                ).insert(cursor).id
+        song_id = Song(
+            song_name,
+            lyrics,
+            album_id,
+            poster_url,
+            release_date
+        ).insert(cursor).id
 
-            for artist in (artists or [{'name': None, type: None}]):
-                artist_id = Artist(artist['name'], artist['type']) \
-                            .insert(cursor).id
-                SongArtist(song_id, artist_id).insert(cursor)
+        for artist in (artists or [{'name': None, type: None}]):
+            artist_id = Artist(artist['name'], artist['type']) \
+                        .insert(cursor).id
+            SongArtist(song_id, artist_id).insert(cursor)
 
-            for quality in mp3_links:
-                url = mp3_links.get(quality)
-                Mp3s(song_id, url, source, quality).insert(cursor)
+        for quality in mp3_links:
+            url = mp3_links.get(quality)
+            Mp3s(song_id, url, source, quality).insert(cursor)
 
+        db.commit()
     except IOError as error:
         print("Error while inserting new song", error)
-    finally:
-        db.commit()
-        db.close()
 
 
 def run_ranking_scrapers(app):

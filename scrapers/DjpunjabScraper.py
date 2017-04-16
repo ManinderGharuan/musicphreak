@@ -12,12 +12,7 @@ class DjpunjabScraper(RootScraper):
         self.whitelist = ['djpunjab.com']
         self.rescrapables = [
             'http://djpunjab.com',
-            'http://djpunjab.com/latest_update.php',
-            'http://djpunjab.com/page/top20.html?type=week',
-            'http://djpunjab.com/page/top20_month.html',
-            'http://djpunjab.com/latest-bollywood-top-songs.html',
-            'http://djpunjab.com/page/latest.html',
-            'http://djpunjab.com/punjabi_music/latest.php?&id=2'
+            'http://djpunjab.com/latest_update.php'
         ]
         self.done_rescrapables = False
         self.base_url = 'http://djpunjab.com'
@@ -131,7 +126,6 @@ class DjpunjabScraper(RootScraper):
         links = self.rescrapables
 
         while links:
-
             if self.done_rescrapables:
                 links = self.get_next_links()
             else:

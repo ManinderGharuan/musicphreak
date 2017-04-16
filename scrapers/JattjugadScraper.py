@@ -99,7 +99,7 @@ class JattjugadScraper(RootScraper):
             if a.has_attr('href'):
                 if (
                         a.attrs['href'].endswith('.mp3')
-                        and soup.find('table').find('img')
+                        and soup.find('table') and soup.find('table').find('img')
                 ):
                     return True
 
@@ -112,7 +112,6 @@ class JattjugadScraper(RootScraper):
         links = self.recrapables
 
         while links:
-
             if self.done_rescrapables:
                 links = self.get_next_links()
             else:
