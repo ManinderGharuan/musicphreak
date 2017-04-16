@@ -7,9 +7,10 @@ class RadioMirchiScraper(RootScraper):
     """
     Create scraper which scrapes radiomirchi.com for top 10 songs
     """
-    def __init__(self):
+    def __init__(self, app):
+        super().__init__(app)
         start_url = 'http://www.radiomirchi.com/more/punjabi-top-10/'
-        super().__init__(start_url)
+        self.soup = super().make_soup(start_url)
 
         self.base_url = 'http://www.radiomirchi.com'
 
@@ -37,6 +38,6 @@ class RadioMirchiScraper(RootScraper):
                 rank,
                 week
             )
-            self.ranking.append(song_ranking.to_dict())
+            self.ranking.append(song_ranking)
 
         return self.ranking

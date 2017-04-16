@@ -62,7 +62,8 @@ class SongRankings():
         song_artist_id = self.get_song_artist_id(cursor)
 
         if not song_artist_id:
-            artist_id = Artist(self.artist).insert(cursor).id
+            type = ('singer')
+            artist_id = Artist(self.artist, type).insert(cursor).id
             song_id = Song(self.song,
                            None,
                            None,

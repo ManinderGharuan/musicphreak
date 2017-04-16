@@ -108,7 +108,7 @@ def run_ranking_scrapers(app):
     rankings = []
 
     try:
-        rm = RadioMirchiScraper()
+        rm = RadioMirchiScraper(app)
 
         rankings += rm.parse()
     except Exception as e:
@@ -131,11 +131,11 @@ def save_rankings_to_db(ranking, app):
         cursor = db.cursor()
 
         for rank in ranking:
-            song_name = rank['name']
-            artist_name = rank['artist']
-            source = rank['source']
-            song_rank = rank['ranking']
-            week = rank['week']
+            song_name = rank.name
+            artist_name = rank.artist
+            source = rank.source
+            song_rank = rank.ranking
+            week = rank.week
 
             for artist in artist_name:
                 SongRankings(
