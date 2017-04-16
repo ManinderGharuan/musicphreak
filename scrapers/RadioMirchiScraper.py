@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from scrapers.RootScraper import RootScraper
 from .Items import Ranking
+from urllib.parse import urlparse
 
 
 class RadioMirchiScraper(RootScraper):
@@ -35,9 +36,14 @@ class RadioMirchiScraper(RootScraper):
             song_containers = soup.select('.top01')
 
             for song in song_containers:
+                youtube_id = None
                 song_name = None
                 artist = []
                 rank = None
+
+                youtube_id = urlparse(
+                    song.select_one('.palyicon').select_one('img').attrs['data-vid-src']
+                ).path.rpartition('/')[-1]
 
                 name_artist_pair = song.find('h3').text
                 name_artist_pair = [
@@ -53,6 +59,7 @@ class RadioMirchiScraper(RootScraper):
                 song_ranking = Ranking(
                     song_name,
                     artist,
+                    youtube_id,
                     self.base_url,
                     rank,
                     week
