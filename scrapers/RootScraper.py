@@ -116,11 +116,15 @@ class RootScraper():
         try:
             while True:
                 cursor = db.cursor()
-                urls = cursor.execute(
-                    """
-                    SELECT url FROM urls WHERE scraped_at is null;
-                    """
-                ).fetchmany(100)
+                urls = []
+
+                for i in self.whitelist:
+                    urls += cursor.execute(
+                        """
+                        SELECT url FROM urls WHERE scraped_at is null AND url LIKE ?;
+                        """,
+                        ('%' + i + '%',)
+                    ).fetchmany(100)
 
                 for url in urls:
                     db.close()
