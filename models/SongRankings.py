@@ -47,7 +47,7 @@ class SongRankings():
                 INNER JOIN artist ON song_artist.artist_id = artist.id
                 WHERE song.name=? and artist.name=?;
                 """,
-                (self.song, self.artist)
+                (self.song, self.artist.strip())
             ).fetchone()
 
             return song_artist_id
@@ -68,7 +68,7 @@ class SongRankings():
                            None,
                            None,
                            None,
-                           artist_id).insert(cursor).id
+                           None).insert(cursor).id
             SongArtist(song_id,
                        artist_id).insert(cursor)
         else:

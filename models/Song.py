@@ -11,25 +11,28 @@ class Song():
         self.name = row[1]
         lyrics = row[2]
         album_id = row[3]
+        poster_img_url = row[4]
+        release_date = row[5]
 
         if not lyrics and self.lyrics:
             lyrics = self.lyrics
             self.update_changes(cursor, "lyrics", self.lyrics)
 
-        self.lyrics = lyrics
-
         if not album_id and self.album_id:
             album_id = self.album_id
             self.update_changes(cursor, "album_id", self.album_id)
 
-        self.album_id = album_id
-        self.poster_img_url = row[4]
-        release_date = row[5]
+        if not poster_img_url and self.poster_img_url:
+            poster_img_url = self.poster_img_url
+            self.update_changes(cursor, 'poster_img_url', self.poster_img_url)
 
         if not release_date and self.release_date:
             release_date = self.release_date
             self.update_changes(cursor, "release_date", self.release_date)
 
+        self.lyrics = lyrics
+        self.album_id = album_id
+        self.poster_img_url = poster_img_url
         self.release_date = release_date
 
     def check_duplicate(self, cursor):
