@@ -1,16 +1,19 @@
 from models.Artist import Artist
 from models.Song import Song
 from models.SongArtist import SongArtist
+from models.Genre import Genre
+from models.SongGenre import SongGenre
 
 
 class SongRankings():
-    def __init__(self, song, artist, youtube_id, source, rank, week):
+    def __init__(self, song, artist, youtube_id, source, rank, week, genre):
         self.song = song
         self.artist = artist
         self.youtube_id = youtube_id
         self.source = source
         self.rank = rank
         self.week = week
+        self.genre = genre
 
     def _absorb_db_row(self, row, cursor):
         self.song_id = row[1]
@@ -19,15 +22,16 @@ class SongRankings():
         self.rank = row[4]
         self.week = row[5]
 
-    def check_duplicate(self, cursor):
+    def check_duplicate(self, cursor, song_id):
         """
         Returns row from database if song_rankings with same week exists
         """
         duplicate_row = cursor.execute(
             """
-            SELECT * from song_rankings WHERE rank = ? AND week = ?;
+            SELECT * from song_rankings
+            WHERE song_id = ? AND rank = ? AND week = ?;
             """,
-            (self.rank, self.week)
+            (song_id, self.rank, self.week)
         ).fetchone()
 
         if duplicate_row:
@@ -80,21 +84,27 @@ class SongRankings():
         if not song_artist_id:
             type = ('singer')
             artist_id = Artist(self.artist, type).insert(cursor).id
-            song_id = Song(self.song,
-                           None,
-                           None,
-                           None,
-                           None,
-                           self.youtube_id).insert(cursor).id
-            SongArtist(song_id,
-                       artist_id).insert(cursor)
+            song_id = Song(
+                self.song,
+                None,
+                None,
+                None,
+                None,
+                self.youtube_id
+            ).insert(cursor).id
+
+            SongArtist(song_id, artist_id).insert(cursor)
         else:
             song_id = song_artist_id[0]
             artist_id = song_artist_id[1]
 
             self.update_youtube_id(cursor, song_id)
 
-        if self.check_duplicate(cursor):
+        genre_id = Genre(self.genre).insert(cursor).id
+
+        SongGenre(song_id, genre_id).insert(cursor)
+
+        if self.check_duplicate(cursor, song_id):
             return self
 
         try:

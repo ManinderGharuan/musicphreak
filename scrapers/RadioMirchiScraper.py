@@ -21,7 +21,7 @@ class RadioMirchiScraper(RootScraper):
         Returns list of `Song`s and assign them to `self.Song`
         """
 
-        for (ranking_type, link) in self.urls_to_scrap.items():
+        for (genre, link) in self.urls_to_scrap.items():
             try:
                 soup = self.make_soup(link)
             except Exception:
@@ -62,9 +62,9 @@ class RadioMirchiScraper(RootScraper):
                     youtube_id,
                     self.base_url,
                     rank,
-                    week
+                    week,
+                    genre
                 )
                 self.ranking.append(song_ranking)
 
-            return
             return self.ranking

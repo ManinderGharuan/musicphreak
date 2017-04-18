@@ -15,7 +15,7 @@ class Song():
         album_id = row[3]
         poster_img_url = row[4]
         release_date = row[5]
-        youtube_id = row[6]
+        youtube_id = row[8]
 
         if not lyrics and self.lyrics:
             lyrics = self.lyrics
