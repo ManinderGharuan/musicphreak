@@ -6,9 +6,9 @@ CREATE TABLE song (
        album_id INTEGER,
        poster_img_url TEXT,
        release_date DATE,
-       youtube_id TEXT,
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       youtube_id TEXT,
        FOREIGN KEY(album_id) REFERENCES album(id)
 );
 
@@ -64,4 +64,23 @@ CREATE TABLE song_rankings (
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        FOREIGN KEY(song_id) REFERENCES song(id),
        FOREIGN KEY(artist_id) REFERENCES artist(id)
+);
+
+DROP TABLE IF EXISTS genre;
+CREATE TABLE genre (
+       id INTEGER PRIMARY KEY autoincrement,
+       name TEXT NOT NULL,
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS song_genre;
+CREATE TABLE song_genre (
+       song_id INTEGER NOT NULL,
+       genre_id INTEGER NOT NULL,
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       FOREIGN KEY(genre_id) REFERENCES genre(id),
+       FOREIGN KEY(song_id) REFERENCES song(id),
+       PRIMARY KEY (genre_id, song_id)
 );

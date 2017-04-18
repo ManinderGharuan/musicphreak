@@ -7,6 +7,8 @@ from models.Song import Song
 from models.Artist import Artist
 from models.SongArtist import SongArtist
 from models.Mp3s import Mp3s
+from models.Genre import Genre
+from models.SongGenre import SongGenre
 from models.SongRankings import SongRankings
 from web.db import get_db
 
@@ -75,6 +77,7 @@ def save_song_to_db(song, db):
         mp3_links = song.mp3_links
         release_date = song.released_date
         youtube_id = song.youtube_id
+        genres = song.genres
         album_id = None
 
         if album_name is not None:
@@ -88,6 +91,11 @@ def save_song_to_db(song, db):
             release_date,
             youtube_id
         ).insert(cursor).id
+
+        if genres:
+            for genre in genres:
+                genre_id = Genre(genre).insert(cursor).id
+                SongGenre(song_id, genre_id).insert(cursor)
 
         for artist in (artists or [{'name': None, type: None}]):
             artist_id = Artist(artist['name'], artist['type']) \
@@ -139,6 +147,7 @@ def save_rankings_to_db(ranking, app):
             source = rank.source
             song_rank = rank.ranking
             week = rank.week
+            genre = rank.genre
 
             for artist in artist_name:
                 SongRankings(
@@ -147,7 +156,8 @@ def save_rankings_to_db(ranking, app):
                     youtube_id,
                     source,
                     song_rank,
-                    week
+                    week,
+                    genre
                 ).insert(cursor)
     except IOError as error:
         print('Error while inserting new ranking ', error)
