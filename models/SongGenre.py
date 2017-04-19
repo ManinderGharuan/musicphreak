@@ -31,11 +31,7 @@ class SongGenre():
         Insert song_genre to database.
         Fail if song_genre already exists
         """
-<<<<<<< HEAD
         if self.check_duplicate(cursor):
-=======
-        if self.check_duplocate(cursor):
->>>>>>> 7230d4f9f01b226d9611c1f3734d37bdbc75c5c0
             return self
 
         try:

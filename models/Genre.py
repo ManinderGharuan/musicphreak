@@ -18,11 +18,7 @@ class Genre():
         ).fetchone()
 
         if duplicate_row:
-<<<<<<< HEAD
             self._absorb_db_row(duplicate_row)
-=======
-            self._absorbe_db_row(duplicate_row)
->>>>>>> 7230d4f9f01b226d9611c1f3734d37bdbc75c5c0
 
         return duplicate_row
 
