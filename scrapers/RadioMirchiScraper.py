@@ -20,7 +20,6 @@ class RadioMirchiScraper(RootScraper):
         """
         Returns list of `Song`s and assign them to `self.Song`
         """
-
         for (genre, link) in self.urls_to_scrap.items():
             try:
                 soup = self.make_soup(link)
@@ -67,4 +66,4 @@ class RadioMirchiScraper(RootScraper):
                 )
                 self.ranking.append(song_ranking)
 
-            return self.ranking
+        return self.ranking

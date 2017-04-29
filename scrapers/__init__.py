@@ -1,6 +1,7 @@
 from scrapers.DjpunjabScraper import DjpunjabScraper
 from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
+from scrapers.DjjohalScraper import DjjohalScraper
 from scrapers.RadioMirchiScraper import RadioMirchiScraper
 from models.Album import Album
 from models.Song import Song
@@ -44,15 +45,29 @@ def run_scrapers(app):
     except Exception as e:
         print("DjpunjabScraper failed: ", e)
 
-    # try:
-    #     mr = MrjattScraper(app)
+    try:
+        mr = MrjattScraper(app)
 
-    #     for song in mr.parse():
+        for song in mr.parse():
+            if song:
+                app.logger.info("Got a song {}".format(song))
+                song_count += 1
+
+                save_song_to_db(song, db)
+    except Exception as e:
+        print("MrjattScraper failed: ", e)
+
+    # try:
+    #     jo = DjjohalScraper(app)
+
+    #     for song in jo.parse():
     #         if song:
     #             app.logger.info("Got a song {}".format(song))
-    #             songs.append(song)
+    #             song_count += 1
+
+    #             save_song_to_db(song, db)
     # except Exception as e:
-    #     print("MrjattScraper failed: ", e)
+    #     print("DjjohalScraper failed: ", e)
 
     db.close()
 
