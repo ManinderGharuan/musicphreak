@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
-from web import app
+from web.cli import cli
 
-app.run(debug=True)
+if __name__ == '__main__':
+    cli.run()

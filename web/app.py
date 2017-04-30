@@ -1,7 +1,6 @@
 from os import path
 from flask import Flask, render_template, g
 from .db import get_db, get_data
-from .cli import add_cli
 
 app = Flask(__name__)
 
@@ -9,8 +8,6 @@ app = Flask(__name__)
 app.config.update(dict(
     DATABASE=path.join(path.dirname(app.root_path), 'musicphreak.db')
 ))
-
-add_cli(app)
 
 
 @app.teardown_appcontext
