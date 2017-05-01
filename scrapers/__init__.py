@@ -1,3 +1,6 @@
+from os import path, mkdir
+from wget import download
+from flask import url_for
 from scrapers.DjpunjabScraper import DjpunjabScraper
 from scrapers.JattjugadScraper import JattjugadScraper
 from scrapers.MrjattScraper import MrjattScraper
@@ -11,6 +14,7 @@ from models.Mp3s import Mp3s
 from models.Genre import Genre
 from models.SongGenre import SongGenre
 from models.SongRankings import SongRankings
+from models.PosterImage import PosterImage
 from web.db import get_db
 
 
@@ -179,3 +183,35 @@ def save_rankings_to_db(ranking, app):
     finally:
         db.commit()
         db.close()
+
+
+def download_song_posters(app):
+    """
+    Download poster image from `image_url`
+    """
+    WEB_PATH = path.join(path.dirname(path.abspath('__main__')), 'web')
+    DOWNLOAD_PATH = WEB_PATH + url_for('static', filename='images/')
+    db = get_db(app)
+    cursor = db.cursor()
+
+    if not path.exists(DOWNLOAD_PATH):
+        mkdir(DOWNLOAD_PATH)
+
+    urls = PosterImage(cursor).select_urls()
+
+    for url in urls:
+        url = url[0]
+        local_url = None
+
+        try:
+            print("Downloading image: ", url)
+
+            local_url = download(url, out=DOWNLOAD_PATH)
+
+            PosterImage(cursor).update(url, local_url)
+        except Exception as error:
+            print("Failed to download poster image: ", url)
+            print(error)
+
+    db.commit()
+    db.close()

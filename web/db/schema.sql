@@ -9,6 +9,7 @@ CREATE TABLE song (
        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
        youtube_id TEXT,
+       local_poster_img_url TEXT DEFAULT NULL,
        FOREIGN KEY(album_id) REFERENCES album(id)
 );
 
