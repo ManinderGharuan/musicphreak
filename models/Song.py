@@ -1,12 +1,13 @@
 class Song():
     def __init__(self, name, lyrics, album_id, poster_img_url, release_date,
-                 youtube_id):
+                 youtube_id, artist_ids=[]):
         self.name = name
         self.lyrics = lyrics
         self.album_id = album_id
         self.poster_img_url = poster_img_url
         self.release_date = release_date
         self.youtube_id = youtube_id
+        self.artist_ids = artist_ids
 
     def _absorb_db_row(self, row, cursor):
         self.id = row[0]
@@ -47,16 +48,20 @@ class Song():
         """
         Returns row from database if song with same name and album_id exists.
         """
-        duplicate_row = cursor.execute(
-            """
-            SELECT * FROM song WHERE name = ?;
-            """,
-            (self.name,)
-        ).fetchone()
+        for artist_id in self.artist_ids:
+            duplicate_row = cursor.execute(
+                """
+                SELECT song.* FROM song
+                INNER JOIN song_artist ON song_artist.song_id = song.id
+                WHERE song.name = ? AND song_artist.artist_id = ?;
+                """,
+                (self.name, artist_id)
+            ).fetchone()
 
-        if duplicate_row:
-            self._absorb_db_row(duplicate_row, cursor)
+            if not duplicate_row:
+                return duplicate_row
 
+        self._absorb_db_row(duplicate_row, cursor)
         return duplicate_row
 
     def update_changes(self, cursor, column_name, value):

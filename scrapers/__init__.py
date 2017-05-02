@@ -30,7 +30,6 @@ def run_scrapers(app):
 
         for song in jt.parse():
             if song:
-                app.logger.info("Got a song {}".format(song))
                 song_count += 1
 
                 save_song_to_db(song, db)
@@ -98,9 +97,16 @@ def save_song_to_db(song, db):
         youtube_id = song.youtube_id
         genres = song.genres
         album_id = None
+        artist_ids = []
 
         if album_name is not None:
             album_id = Album(album_name).insert(cursor).id
+
+        for artist in (artists or [{'name': None, type: None}]):
+            artist_id = Artist(artist['name'], artist['type']) \
+                        .insert(cursor).id
+
+            artist_ids.append(artist_id)
 
         song_id = Song(
             song_name,
@@ -108,18 +114,17 @@ def save_song_to_db(song, db):
             album_id,
             poster_url,
             release_date,
-            youtube_id
+            youtube_id,
+            artist_ids=artist_ids
         ).insert(cursor).id
+
+        for artist_id in artist_ids:
+            SongArtist(song_id, artist_id).insert(cursor)
 
         if genres:
             for genre in genres:
                 genre_id = Genre(genre).insert(cursor).id
                 SongGenre(song_id, genre_id).insert(cursor)
-
-        for artist in (artists or [{'name': None, type: None}]):
-            artist_id = Artist(artist['name'], artist['type']) \
-                        .insert(cursor).id
-            SongArtist(song_id, artist_id).insert(cursor)
 
         for quality in mp3_links:
             url = mp3_links.get(quality)
