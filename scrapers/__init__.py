@@ -172,16 +172,36 @@ def save_rankings_to_db(ranking, app):
             song_rank = rank.ranking
             week = rank.week
             genre = rank.genre
+            artist_ids = []
 
             for artist in artist_name:
+                artist_id = Artist(artist, 'singer') \
+                        .insert(cursor).id
+
+                artist_ids.append(artist_id)
+
+            song_id = Song(
+                song_name,
+                None,
+                None,
+                None,
+                None,
+                youtube_id,
+                artist_ids=artist_ids
+            ).insert(cursor).id
+
+            genre_id = Genre(genre).insert(cursor).id
+            SongGenre(song_id, genre_id).insert(cursor)
+
+            for artist_id in artist_ids:
+                SongArtist(song_id, artist_id).insert(cursor)
+
                 SongRankings(
-                    song_name,
-                    artist,
-                    youtube_id,
+                    song_id,
+                    artist_id,
                     source,
                     song_rank,
                     week,
-                    genre
                 ).insert(cursor)
     except IOError as error:
         print('Error while inserting new ranking ', error)

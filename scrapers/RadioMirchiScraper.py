@@ -44,14 +44,19 @@ class RadioMirchiScraper(RootScraper):
                     song.select_one('.palyicon').select_one('img').attrs['data-vid-src']
                 ).path.rpartition('/')[-1]
 
+                song_name = song.find('h2').text
                 name_artist_pair = song.find('h3').text
                 name_artist_pair = [
                     i.strip() for i in name_artist_pair.split('\n')
                 ]
-                song_name = name_artist_pair[0].strip()
-                artist = [
+                artists = [
                     i.strip() for i in name_artist_pair[1].split(',')
                 ]
+
+                artist = []
+
+                for a in artists:
+                    artist.extend([j.strip() for j in a.split('&')])
 
                 rank = song.select_one('.circle').text
 
