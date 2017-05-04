@@ -26,10 +26,12 @@ def run_scrapers(app):
     db = get_db(app)
 
     try:
-        jt = JattjugadScraper(app)
+        jt = JattjugadScraper()
 
         for song in jt.parse():
             if song:
+                print("Got a song {}".format(song))
+                print('---------------------')
                 song_count += 1
 
                 save_song_to_db(song, db)
@@ -37,11 +39,12 @@ def run_scrapers(app):
         print("JattjugadScraper failed: ", e)
 
     try:
-        dj = DjpunjabScraper(app)
+        dj = DjpunjabScraper()
 
         for song in dj.parse():
             if song:
-                app.logger.info("Got a song {}".format(song))
+                print("Got a song {}".format(song))
+                print('-------------------')
                 song_count += 1
 
                 save_song_to_db(song, db)
@@ -49,11 +52,11 @@ def run_scrapers(app):
         print("DjpunjabScraper failed: ", e)
 
     try:
-        mr = MrjattScraper(app)
+        mr = MrjattScraper()
 
         for song in mr.parse():
             if song:
-                app.logger.info("Got a song {}".format(song))
+                print("Got a song {}".format(song))
                 song_count += 1
 
                 save_song_to_db(song, db)
@@ -106,8 +109,6 @@ def save_song_to_db(song, db):
             artist_id = Artist(artist['name'], artist['type']) \
                         .insert(cursor).id
 
-            artist_ids.append(artist_id)
-
         song_id = Song(
             song_name,
             lyrics,
@@ -142,7 +143,7 @@ def run_ranking_scrapers(app):
     rankings = []
 
     try:
-        rm = RadioMirchiScraper(app)
+        rm = RadioMirchiScraper()
 
         rankings += rm.parse()
     except Exception as e:

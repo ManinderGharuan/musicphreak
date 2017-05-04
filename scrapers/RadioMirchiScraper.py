@@ -8,8 +8,8 @@ class RadioMirchiScraper(RootScraper):
     """
     Create scraper which scrapes radiomirchi.com for top 10 songs
     """
-    def __init__(self, app):
-        super().__init__(app)
+    def __init__(self):
+        super().__init__()
         self.urls_to_scrap = {
             'punjabi': 'http://www.radiomirchi.com/more/punjabi-top-10/',
             'hindi': 'http://www.radiomirchi.com/more/mirchi-top-20/'

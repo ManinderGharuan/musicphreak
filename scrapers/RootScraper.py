@@ -18,8 +18,7 @@ class RootScraper():
     Root class to be subclassed by other scrapers. Provide common functionality
     for all scrapers.
     """
-    def __init__(self, app):
-        self.app = app
+    def __init__(self):
         self.songs = []
         self.ranking = []
 
@@ -40,7 +39,7 @@ class RootScraper():
                 already_scraped = True
 
         except Exception as error:
-            self.app.logger.debug("Error while checking if url is already scraped: " + error)
+            print("Error while checking if url is already scraped: " + error)
         finally:
             db.close()
 
@@ -50,13 +49,10 @@ class RootScraper():
         """
         Takes a url, and return BeautifulSoup for that Url
         """
-        if self.is_scraped(url):
-            raise Exception('Already scraped')
-
         header = {
             'user-agent': random.choice(user_agents)
         }
-        self.app.logger.info("Downloading page: " + url)
+        print("Downloading page: " + url)
 
         return BeautifulSoup(get(url, headers=header).
                              content, 'html.parser')
@@ -71,6 +67,7 @@ class RootScraper():
     def on_success(self, url):
         db = get_db()
         print('Done with', url)
+        print("------------------")
 
         try:
             cursor = db.cursor()
@@ -103,7 +100,6 @@ class RootScraper():
         except Exception as error:
             print("error while inserting scraped url: ", error)
         finally:
-            self.app.logger.info("will scrap {} in future".format(urls))
             db.commit()
             db.close()
 

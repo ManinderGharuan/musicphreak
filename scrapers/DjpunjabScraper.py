@@ -7,8 +7,8 @@ class DjpunjabScraper(RootScraper):
     """
     Creates scraper which scraps djpunjab.com
     """
-    def __init__(self, app):
-        super().__init__(app)
+    def __init__(self):
+        super().__init__()
         self.whitelist = ['djpunjab.com']
         self.rescrapables = [
             'http://djpunjab.com',
