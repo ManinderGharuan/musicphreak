@@ -109,6 +109,9 @@ def save_song_to_db(song, db):
             artist_id = Artist(artist['name'], artist['type']) \
                         .insert(cursor).id
 
+            if artist['type'] == 'singer':
+                artist_ids.append(artist_id)
+
         song_id = Song(
             song_name,
             lyrics,
