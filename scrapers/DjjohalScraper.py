@@ -11,8 +11,8 @@ class DjjohalScraper(RootScraper):
         super().__init__()
         self.whitelist = ['mr-johal.com']
         self.rescrapables = [
-            'http://djjohal.com/',
-            'https://mr-johal.com/updates.PP'
+            'http://djjohal.com',
+            'https://mr-johal.com/updates.php'
         ]
         self.done_rescrapables = False
         self.base_url = 'http://djjohal.com'
@@ -22,22 +22,91 @@ class DjjohalScraper(RootScraper):
         Returns Song Item form the soup if it is an item page.
         None otherwise
         """
-        pass
+        img = soup.select_one('.albumCover').select_one('img').get('src')
+
+        metadata = soup.select_one('.albumInfo')
+
+        metadata_row = [
+            [j.strip() for j in i.text.split(':')]
+            for i in metadata.select('p')
+        ]
+
+        name = None
+        artists = []
+        album = None
+        genres = []
+        released_date = None
+
+        for text in metadata_row:
+            if text[0].lower() == 'singer':
+                artists += [{'name': i.strip(), 'type': 'singer'}
+                            for i in text[1].split(',')]
+
+            if text[0].lower() == 'album':
+                album = text[1]
+
+            if text[0].lower() == 'genre':
+                genres = [i.strip() for i in text[1].split(',')]
+
+            if text[0].lower() == 'music':
+                artists += [{'name': i.strip(), 'type': 'music_composer'}
+                            for i in text[1].split(',')]
+
+            if text[0].lower() == 'lyrics':
+                artists += [{'name': i.strip(), 'type': 'lyricist'}
+                            for i in text[1].split(',')]
+
+            if text[0].lower() == 'released':
+                released_date = text[1]
+
+            if text[0].lower() == 'title':
+                name = text[1]
+
+        if '' in genres:
+            genres.remove('')
+
+        if not name:
+            name = album
+            album = None
+
+        mp3_links = {}
+        maybe_mp3_links = []
+
+        for a in soup.select('a'):
+            if a.attrs['href'].endswith('.mp3'):
+                maybe_mp3_links.append(a)
+
+        for mp3_link in maybe_mp3_links:
+            if '48 kbps' in mp3_link.text:
+                mp3_links['48'] = mp3_link.attrs['href']
+            if '128 kbps' in mp3_link.text:
+                mp3_links['128'] = mp3_link.attrs['href']
+            if '320 kbps' in mp3_link.text:
+                mp3_links['320'] = mp3_link.attrs['href']
+
+        print(released_date)
+        return Song(name, artists, album, self.base_url,
+                    img, mp3_links, released_date=released_date, genres=genres)
 
     def extract_next_links(self, soup, base_url):
         """
         Returns links to scrap next from the soup
         """
-        pass
+        next_links = set()
+
+        for a in soup.select('a'):
+            link = urljoin(base_url, a.get('href'))
+
+            if urlparse(link).hostname in self.whitelist:
+                next_links.add((link,))
+
+        return next_links
 
     def soup_has_item(self, soup):
         """
         Returns True if soup has item, False otherwise
         """
-        print(soup.select('a/'))
-        return
         for a in soup.find_all('a'):
-            print(a)
             if (
                     a.attrs['href'].endswith('.mp3')
                     and soup.select_one('.albumCover')
@@ -60,7 +129,6 @@ class DjjohalScraper(RootScraper):
                 self.done_rescrapables = True
 
             for link in links:
-                link = 'https://mr-johal.com/single/57421/a-kay-tait-goriye.html'
                 next_links = []
                 song = None
 
@@ -70,11 +138,9 @@ class DjjohalScraper(RootScraper):
                     continue
 
                 if self.soup_has_item(soup):
-                    return
                     song = self.extract_item(soup)
                     self.songs.append(song)
 
-                return
                 next_links = self.extract_next_links(soup, link)
 
                 self.scrap_in_future(list(next_links))
@@ -82,4 +148,4 @@ class DjjohalScraper(RootScraper):
 
                 yield song
 
-            return self.songs
+        return self.songs

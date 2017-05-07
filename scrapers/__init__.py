@@ -44,7 +44,7 @@ def run_scrapers(app):
         for song in dj.parse():
             if song:
                 print("Got a song {}".format(song))
-                print('-------------------')
+                print('--------------------')
                 song_count += 1
 
                 save_song_to_db(song, db)
@@ -57,23 +57,25 @@ def run_scrapers(app):
         for song in mr.parse():
             if song:
                 print("Got a song {}".format(song))
+                print('---------------------')
                 song_count += 1
 
                 save_song_to_db(song, db)
     except Exception as e:
         print("MrjattScraper failed: ", e)
 
-    # try:
-    #     jo = DjjohalScraper(app)
+    try:
+        jo = DjjohalScraper()
 
-    #     for song in jo.parse():
-    #         if song:
-    #             app.logger.info("Got a song {}".format(song))
-    #             song_count += 1
+        for song in jo.parse():
+            if song:
+                print("Got a song {}". format(song))
+                print('--------------------')
+                song_count += 1
 
-    #             save_song_to_db(song, db)
-    # except Exception as e:
-    #     print("DjjohalScraper failed: ", e)
+                save_song_to_db(song, db)
+    except Exception as e:
+        print("DjjohalScraper failed: ", e)
 
     db.close()
 
@@ -238,9 +240,9 @@ def download_song_posters(app):
             local_url = download(url, out=DOWNLOAD_PATH)
 
             PosterImage(cursor).update(url, local_url)
+            db.commit()
         except Exception as error:
             print("Failed to download poster image: ", url)
             print(error)
 
-    db.commit()
     db.close()
