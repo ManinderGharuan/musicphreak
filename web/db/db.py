@@ -2,6 +2,8 @@ from os import path
 from flask import g
 import sqlite3
 from itertools import groupby
+from datetime import timedelta, date
+from subprocess import call
 
 
 def connect_db(app):
@@ -81,6 +83,10 @@ def get_data(db):
     """
     cursor = db.cursor()
 
+    today = date.today()
+    idx = (today.weekday()) + 1 % 7
+    sat = str(today - timedelta(7 + idx - 6))
+
     rows = cursor.execute(
         """
         SELECT song.name AS "song_name", artist.name AS "artist_name",
@@ -94,9 +100,14 @@ def get_data(db):
                INNER JOIN song_artist ON song.id = song_artist.song_id
                INNER JOIN artist ON artist.id = song_artist.artist_id
                INNER JOIN mp3s ON mp3s.song_id = song.id
-        WHERE artist.type = 'singer'
-        ORDER BY song_name;
-        """
+               INNER JOIN song_rankings ON song_rankings.song_id = song.id
+        WHERE artist.type = 'singer' AND song_rankings.week LIKE ?
+        ORDER BY song_rankings.rank;
+        """, ('{}%'.format(sat),)
     ).fetchall()
+
+    if not rows:
+        call(['./run.py', 'run_ranking_scraper'])
+        get_data(db)
 
     return normalize_data(rows)
