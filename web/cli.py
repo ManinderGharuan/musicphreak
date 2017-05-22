@@ -1,4 +1,5 @@
 from flask_script import Manager
+import os
 from . import app
 from scrapers import run_scrapers, run_ranking_scrapers, download_song_posters
 from .db import init_db
@@ -34,4 +35,10 @@ def download_poster_images():
 @cli.command
 def web():
     """Run the web server"""
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+
+    print("PORT IS", port)
+
+    debug = False if os.environ.get('FLASK_PROD') else True
+
+    app.run(debug=debug, port=port)

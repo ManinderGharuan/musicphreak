@@ -1,1 +1,2 @@
-web: FLASK_PROD=1 PORT=80 ./run.py web
+worker: ./run.py run_scrapper
+web: FLASK_PROD=1 ./run.py web

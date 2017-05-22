@@ -68,3 +68,12 @@ Start URL: https://mr-jatt.com/punjabisongs-top20.html
 
 **** CLI
 **** Web UI
+
+* TODOS
+** DONE Only show this week's top songs
+CLOSED: [2017-05-22 Mon 12:30]
+When user visit top ranking page:
+
+- Check if rankings for *this* week are present in database
+- If yes, then show those songs in top songs page
+- If no, run ranking_scraper; and repeat

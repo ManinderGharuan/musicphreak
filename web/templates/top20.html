@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Top 20 Punjabi songs</title>
+    <title>Top Songs</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
     <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}" ></script>
   </head>
@@ -17,7 +17,7 @@
     </nav>
 
     <div class='container'>
-      <h1 class='header'>Top 20 punjabi songs</h1>
+      <h1 class='header'>Top Songs</h1>
       <ul class='songs-list'>
 
         {% for song in songs %}
