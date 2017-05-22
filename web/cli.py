@@ -37,10 +37,6 @@ def web():
     """Run the web server"""
     port = int(os.environ.get('PORT', 5000))
 
-    print("PORT IS", port)
-
     debug = False if os.environ.get('FLASK_PROD') else True
-
-    run_scrapers(app)
 
     app.run(host='0.0.0.0', debug=debug, port=port)
