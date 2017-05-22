@@ -26,19 +26,6 @@ def run_scrapers(app):
     db = get_db(app)
 
     try:
-        jt = JattjugadScraper()
-
-        for song in jt.parse():
-            if song:
-                print("Got a song {}".format(song))
-                print('---------------------')
-                song_count += 1
-
-                save_song_to_db(song, db)
-    except Exception as e:
-        print("JattjugadScraper failed: ", e)
-
-    try:
         dj = DjpunjabScraper()
 
         for song in dj.parse():
@@ -50,19 +37,6 @@ def run_scrapers(app):
                 save_song_to_db(song, db)
     except Exception as e:
         print("DjpunjabScraper failed: ", e)
-
-    try:
-        mr = MrjattScraper()
-
-        for song in mr.parse():
-            if song:
-                print("Got a song {}".format(song))
-                print('---------------------')
-                song_count += 1
-
-                save_song_to_db(song, db)
-    except Exception as e:
-        print("MrjattScraper failed: ", e)
 
     try:
         jo = DjjohalScraper()
@@ -78,6 +52,32 @@ def run_scrapers(app):
         print("DjjohalScraper failed: ", e)
 
     db.close()
+
+    try:
+        jt = JattjugadScraper()
+
+        for song in jt.parse():
+            if song:
+                print("Got a song {}".format(song))
+                print('---------------------')
+                song_count += 1
+
+                save_song_to_db(song, db)
+    except Exception as e:
+        print("JattjugadScraper failed: ", e)
+
+    try:
+        mr = MrjattScraper()
+
+        for song in mr.parse():
+            if song:
+                print("Got a song {}".format(song))
+                print('---------------------')
+                song_count += 1
+
+                save_song_to_db(song, db)
+    except Exception as e:
+        print("MrjattScraper failed: ", e)
 
     print('******************************')
     print('**  SAVED {} SONGS TO DB  ***'.format(song_count))
