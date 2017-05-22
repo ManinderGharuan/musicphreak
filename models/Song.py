@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class Song():
     def __init__(self, name, lyrics, album_id, poster_img_url, release_date,
                  youtube_id, artist_ids=[]):
@@ -71,9 +74,9 @@ class Song():
         try:
             cursor.execute(
                 """
-                UPDATE song SET {} = ? WHERE id = ?;
+                UPDATE song SET {} = ?, updated_at = ? WHERE id = ?;
                 """
-                .format(column_name), (value, self.id)
+                .format(column_name), (value, datetime.today(), self.id)
             )
         except Exception as error:
             print('Error occurred while updating song {}'

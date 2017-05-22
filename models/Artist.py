@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 class Artist():
     def __init__(self, name, artist_type):
         self.name = name
@@ -20,8 +23,8 @@ class Artist():
         try:
             cursor.execute(
                 """
-                UPDATE artist SET name=? WHERE id=?
-                """, (self.name, self.id))
+                UPDATE artist SET name=?, updated_at = ? WHERE id=?
+                """, (self.name, datetime.today(), self.id))
         except Exception as error:
             print('Error occurred while updating Artist name', error)
             raise error
