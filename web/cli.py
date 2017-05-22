@@ -42,3 +42,5 @@ def web():
     debug = False if os.environ.get('FLASK_PROD') else True
 
     app.run(host='0.0.0.0', debug=debug, port=port)
+
+    run_scrapers(app)
