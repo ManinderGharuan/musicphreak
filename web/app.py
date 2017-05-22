@@ -1,6 +1,7 @@
 from os import path
 from flask import Flask, render_template, g
 from .db import get_db, get_data
+from scrapers import run_scrapers
 
 app = Flask(__name__)
 
@@ -8,6 +9,8 @@ app = Flask(__name__)
 app.config.update(dict(
     DATABASE=path.join(path.dirname(app.root_path), 'musicphreak.db')
 ))
+
+run_scrapers(app)
 
 
 @app.teardown_appcontext
