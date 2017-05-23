@@ -18,10 +18,20 @@ def close_db(error):
 
 
 @app.route('/')
-def show_top20():
+def show_mainpage():
     data = get_data(get_db(app))
 
     for song in data:
         song['smallest_bitrate'] = min(song.get('mp3_links').keys())
 
-    return render_template('top20.html', songs=data)
+    return render_template('musicphreak.html', songs=data)
+
+
+@app.route('/top-songs')
+def show_topsongs():
+    data = get_data(get_db(app))
+
+    for song in data:
+        song['smallest_bitrate'] = min(song.get('mp3_links').keys())
+
+    return render_template("topsongs.html", songs=data)

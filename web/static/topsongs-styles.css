@@ -1,51 +1,16 @@
-* {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif
-}
-
-.nav-bar {
-  list-style-type: none;
-  background-color: #222;
-  list-style-type: none;
-  overflow: hidden;
-  padding-left: 0;
-  border-bottom: 1px solid #333;
-}
-
-.nav-items{
-  float: right;
-}
-
-.nav-links{
-  display: inline-block;
-  color: #e6e5e5;
-  text-align: center;
-  padding: 20px 15px;
-  text-decoration: none;
-}
-
-.nav-links:hover {
-  text-decoration:none;
-  background-color: #4CAF50;
-}
-
-.container {
-  background: #222;
-  color: #eee;
-  padding-top: 30px;
+.top-songs {
+  margin-top: 10px;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 40px;
+  padding-left: 50px;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 20px;
 }
 
 .songs-list {
   overflow: hidden;
-  max-width: 1030px;
-  width: 90%;
-  margin: 0 auto;
+  padding: 0 40px;
 }
 
 .song {
@@ -58,10 +23,15 @@
   position: relative;
 }
 
+.song-name, .song-artist {
+  text-overflow: ellipsis;
+  color: rgba(255,255,255,.8);
+  font-weight: 400;
+}
+
 .song-name {
   margin-top: 10px;
   white-space: nowrap;
-  text-overflow: ellipsis;
   overflow: hidden;
   font-size: 20px;
 }
@@ -74,14 +44,13 @@
 .thumb {
   content: ".";
   height: 300px;
-  width: 300px;
   cursor: pointer;
   background-repeat: no-repeat;
   background-size: cover;
 }
 
 .download-links {
-  width: 287px;
+  width: 225px;
   padding: 4px;
   margin-top: 10px;
   white-space: nowrap;
@@ -206,12 +175,4 @@
 @keyframes spinX {
   0%   {transform: rotateZ(0deg); }
   100% {transform: rotateZ(360deg);}
-}
-
-.footer {
-  width: 100%;
-  background-color: #111;
-  color: #fff;
-  padding: 25px;
-  font-size: 13px;
 }
