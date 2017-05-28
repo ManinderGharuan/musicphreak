@@ -5,7 +5,7 @@
 .top-chart {
   padding: 25px;
   height: 260px;
-  width: 780px;
+  width: 800px;
   border-bottom: 1px solid #222;
 }
 
@@ -28,15 +28,6 @@
   list-style: none;
 }
 
-.inner-chart {
-  height: 170;
-  width: 750;
-  float: left;
-  overflow: hidden;
-  padding: 1px 0;
-  position: relative;
-}
-
 .songs-list {
   height: 175;
   list-style-type: none;
@@ -55,16 +46,6 @@
   border-radius: 2px;
   float: left;
   display: inline-block;
-}
-
-.status-icon {
-  position: absolute;
-  height: 80px;
-  width: 80px;
-  top: calc(50% - 40px);
-  left: calc(50% - 40px);
-  background-size: contain;
-  background-repeat: no-repeat;
 }
 
 .thumb {
