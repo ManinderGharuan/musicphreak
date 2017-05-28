@@ -221,7 +221,7 @@ def download_song_posters(app):
     Download poster image from `image_url`
     """
     WEB_PATH = path.join(path.dirname(path.abspath('__main__')), 'web')
-    DOWNLOAD_PATH = WEB_PATH + url_for('static', filename='images/')
+    DOWNLOAD_PATH = WEB_PATH + url_for('static', filename='images')
     db = get_db(app)
     cursor = db.cursor()
 
@@ -238,6 +238,8 @@ def download_song_posters(app):
             print("Downloading image: ", url)
 
             local_url = download(url, out=DOWNLOAD_PATH)
+
+            local_url = path.basename(local_url)
 
             PosterImage(cursor).update(url, local_url)
             db.commit()
