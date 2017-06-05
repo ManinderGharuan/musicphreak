@@ -11,8 +11,8 @@ class RadioMirchiScraper(RootScraper):
     def __init__(self):
         super().__init__()
         self.urls_to_scrap = {
-            'punjabi': 'http://www.radiomirchi.com/more/punjabi-top-10/',
-            'hindi': 'http://www.radiomirchi.com/more/mirchi-top-20/'
+            'Punjabi': 'http://www.radiomirchi.com/more/punjabi-top-10/',
+            'Bollywood': 'http://www.radiomirchi.com/more/mirchi-top-20/'
         }
         self.base_url = 'http://www.radiomirchi.com'
 
