@@ -70,6 +70,7 @@ class MrjattScraper(RootScraper):
         artists = []
         album = None
         released_date = None
+        genre = []
 
         for text in matadata_rows:
             if text[0].lower() == 'title':
@@ -97,6 +98,10 @@ class MrjattScraper(RootScraper):
             if text[0].lower() == 'released':
                 rel_date = ' '.join(text[1].split(','))
                 released_date = datetime.strptime(rel_date, '%d %b %Y')
+
+            if text[0].lower() == 'category':
+                genre = [i.replace('songs', '').strip()
+                         for i in text[1].split(',')]
 
         if not name:
             name = album
@@ -137,7 +142,8 @@ class MrjattScraper(RootScraper):
             youtube_id = self.extract_youtube_id(lyrics_soup)
 
         return Song(name, artists, album, self.base_url, img, mp3_links,
-                    released_date=released_date, youtube_id=youtube_id)
+                    released_date=released_date, youtube_id=youtube_id,
+                    genres=genre)
 
     def extract_next_links(self, soup, base_url):
         """

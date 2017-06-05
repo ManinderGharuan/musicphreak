@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from requests import get
+import re
 import random
 from datetime import date
 from scrapers.db import get_db
@@ -21,6 +22,7 @@ class RootScraper():
     def __init__(self):
         self.songs = []
         self.ranking = []
+        self.ignorelist = []
 
     def is_scraped(self, url):
         db = get_db()
@@ -107,20 +109,25 @@ class RootScraper():
         """
         Returns next link from scraper database
         """
+        def regexp(expr, item):
+            reg = re.compile(expr)
+            return reg.search(item) is not None
+
         db = get_db()
+        db.create_function("REGEXP", 2, regexp)
 
         try:
             while True:
                 cursor = db.cursor()
-                urls = []
+                whitelist = '|'.join(self.whitelist)
+                ignorelist = '|'.join(self.ignorelist)
 
-                for i in self.whitelist:
-                    urls += cursor.execute(
-                        """
-                        SELECT url FROM urls WHERE scraped_at is null AND url LIKE ?;
-                        """,
-                        ('%' + i + '%',)
-                    ).fetchmany(100)
+                urls = cursor.execute(
+                    """
+                    SELECT url FROM urls WHERE scraped_at is null AND url REGEXP ? AND url not REGEXP ?;
+                    """,
+                    (whitelist, ignorelist)
+                ).fetchmany(100)
 
                 for url in urls:
                     db.close()

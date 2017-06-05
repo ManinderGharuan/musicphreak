@@ -10,6 +10,7 @@ class DjjohalScraper(RootScraper):
     def __init__(self):
         super().__init__()
         self.whitelist = ['mr-johal.com']
+        self.ignorelist = ['cat=New+Talent', 'cat=Bhakti+Sangeet', 'cat=Haryanavi', 'cat=English', 'cat=Non+Stop', 'cat=Khalistani', 'cat=Tamil', 'cat=Fun+Audio', 'cat=Telugu', 'cat=Arabic', 'cat=Pakistani', 'cat=Assamese', 'cat=Bengali', 'cat=Bhojpuri', 'cat=Carnatic+Movies', 'cat=Comedy', 'cat=Compilations', 'cat=Dogri', 'cat=Fusion', 'cat=Ghazals', 'cat=Gujarati', 'cat=Hindustani+Instrumental', 'cat=Jigalabandhi', 'cat=Kannada', 'cat=Kashmiri', 'cat=Kumaoni+and+Uttaranchali', 'cat=Malayalam', 'cat=Marathi', 'cat=Nepali', 'cat=Oriya', 'cat=Patriotic', 'cat=Qawwali', 'cat=Rajasthani', 'cat=Sanskrit', 'cat=Sindhi', 'cat=Unknown+Talent', 'cat=Urdu']
         self.rescrapables = [
             'http://djjohal.com',
             'https://mr-johal.com/updates.php'
@@ -97,7 +98,8 @@ class DjjohalScraper(RootScraper):
         for a in soup.select('a'):
             link = urljoin(base_url, a.get('href'))
 
-            if urlparse(link).hostname in self.whitelist:
+            query = urlparse(link).query
+            if urlparse(link).hostname in self.whitelist and query not in self.ignorelist:
                 next_links.add((link,))
 
         return next_links

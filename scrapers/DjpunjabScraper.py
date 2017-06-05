@@ -10,6 +10,17 @@ class DjpunjabScraper(RootScraper):
     def __init__(self):
         super().__init__()
         self.whitelist = ['djpunjab.com']
+        self.ignorelist = [
+            'tamil', 'shabad-gurbani', 'ghazals', 'comedy', 'pakistani',
+            'qawwali', 'urdu', 'telugu', 'bhakti-sangeet', 'bengali',
+            'hindustani-instrumental', 'malayalam', 'kannada', 'gujarati',
+            'compilations', 'marathi', 'rajasthani', 'haryanavi', 'oriya',
+            'sindhi', 'kashmiri', 'carnatic-movies', 'assamese', 'jugalbandhi',
+            'fusion', 'patriotic', 'nepali', 'bhojpuri',
+            'kumaoni-and-uttaranchali', 'sanskrit', 'arabic',
+            'unknown-talent', 'dogri-music'
+        ]
+
         self.rescrapables = [
             'http://djpunjab.com',
             'http://djpunjab.com/latest_update.php'
@@ -98,7 +109,8 @@ class DjpunjabScraper(RootScraper):
         for a in soup.select('a'):
             link = urljoin(self.base_url, a.get('href'))
 
-            if urlparse(link).hostname in self.whitelist:
+            path = urlparse(link).path.split('/')[0]
+            if urlparse(link).hostname in self.whitelist and path not in self.ignorelist:
                 next_links.add((link,))
 
         return next_links
